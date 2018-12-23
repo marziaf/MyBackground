@@ -1,6 +1,6 @@
-%{v0.1 This program evaluates the differences between the
-%frames and the background, creates a mask and replaces
-%with the new background. Comparisons are very inefficients
+%{v0.2 This program creates nxmx3xt=3 blocks, which store t=3 consecutive 
+%frames. These are used to calculate the time variance, from which a mask
+%is built
 %}
 
 video = 'multipic2.mp4';
@@ -25,7 +25,7 @@ background = read(VObj,1);
 [ysize,xsize,~] = size(background);
 
 %precision parameters
-sensitivity = 15; % more sensitivity -> less noise
+sensitivity = 100; % more sensitivity -> less noise
 blockSize = 10;
 
 %image for new background
@@ -41,42 +41,39 @@ end
 %outputVideo =
 %VideoWriter(strcat(foldername,'/',videoName,"_",backgroundName,".avi"));
 %%TODO perchè ritorna errore folder video non esiste?
-outputVideo = VideoWriter('video/bov5.avi');
+outputVideo = VideoWriter('video/bov7.avi');
 outputVideo.FrameRate = FrameRate;
 open(outputVideo);
+%3D block -> 3 frames per time
+timeBlock = zeros(ysize,xsize,3,3);
 %% GET ALL THE FRAMES %TODO deal with sizes not multiple of block size
-for index=1:numFrames-1 %iterate over frames
-    disp("computing frame "+num2str(index));
+for index=1:numFrames-2 %iterate over frames (now it calculates a new mask for each frame, examining 3*numFrames frames)
+    if(mod(index,5)==0) 
+        disp("computing... "+num2str(index/numFrames*100)+"%");
+    end
     %read frames
-    vidFrame1 = read(VObj,index);
-    vidFrame2 = read(VObj,index+1);
-    disp("got frames")
-    %% CREATE MASK AND REPLACE BACKGROUND
-    %build differences matrix and weigth
-    diff = abs(vidFrame1-vidFrame2)./sensitivity;
-    %sum the color errors
-    diff = diff(:,:,1)+diff(:,:,2)+diff(:,:,3);
-    diff = diff.^2;
-    %make this matrix more homogeneus to reduce noise and catch smaller
-    %movements
-    %for row=1:blockSize:ysize-blockSize
-    %    for col=1:blockSize:xsize-blockSize
-    %        diff(row:row+blockSize,col:col+blockSize) = mean(diff,'all');
-    %    end
-    %end
+    vidFrame = read(VObj,index);
+    timeBlock(:,:,:,1) = vidFrame;
+    timeBlock(:,:,:,2) = read(VObj,index+1);
+    timeBlock(:,:,:,3) = read(VObj,index+2);
+    %calculate variance over time
+    variance = var(timeBlock,1,4);
+    %sum errors on different colors
+    variance2d = variance(:,:,1)+variance(:,:,2)+variance(:,:,3);
+    %weigth variance
+    variance2d = floor(variance2d./sensitivity);
     
+    %% CREATE MASK AND REPLACE BACKGROUND
     %get mask from diff
     %mask -> zero if sub with new background, one otherwise
-    %newMask -> current mask from diff
-    %mask -> sum of old and new
-    mask(:,:,1)=diff&diff; mask(:,:,2)=mask(:,:,1); mask(:,:,3)=mask(:,:,1);
+    mask(:,:,1)=variance2d&variance2d; mask(:,:,2)=mask(:,:,1); mask(:,:,3)=mask(:,:,1);
     %opposite mask
     nmask = round(~mask);
     %make integer for multiplication
     mask = uint8(mask);
     nmask = uint8(nmask);
     %blocks selection
-    newFrame = vidFrame1.*mask;
+    newFrame = vidFrame.*mask;
     newBackgroundIm = newBack.*nmask;
     %add to video the overlap
     writeVideo(outputVideo,newFrame+newBackgroundIm);
