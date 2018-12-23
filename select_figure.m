@@ -19,14 +19,13 @@ numFrames = get(VObj, 'NumberOfFrames');
 FrameRate = get(VObj,'FrameRate');
 bitPerPx = get(VObj,'BitsPerPixel');
 
-
-%get first frame as background
+%get first frame as background (to get sizes)
 background = read(VObj,1); 
 %get size of the frames
 [ysize,xsize,~] = size(background);
 
-%precision parameters for substitution
-sensitivity = 10;
+%precision parameters
+sensitivity = 15; % more sensitivity -> less noise
 blockSize = 10;
 
 %image for new background
@@ -42,41 +41,46 @@ end
 %outputVideo =
 %VideoWriter(strcat(foldername,'/',videoName,"_",backgroundName,".avi"));
 %%TODO perchè ritorna errore folder video non esiste?
-outputVideo = VideoWriter('video/bov4.avi');
+outputVideo = VideoWriter('video/bov5.avi');
 outputVideo.FrameRate = FrameRate;
 open(outputVideo);
 %% GET ALL THE FRAMES %TODO deal with sizes not multiple of block size
-for index=2:numFrames %iterate over frames
+for index=1:numFrames-1 %iterate over frames
     disp("computing frame "+num2str(index));
     %read frames
-    vidFrame = read(VObj,index);
-    
+    vidFrame1 = read(VObj,index);
+    vidFrame2 = read(VObj,index+1);
+    disp("got frames")
     %% CREATE MASK AND REPLACE BACKGROUND
+    %build differences matrix and weigth
+    diff = abs(vidFrame1-vidFrame2)./sensitivity;
+    %sum the color errors
+    diff = diff(:,:,1)+diff(:,:,2)+diff(:,:,3);
+    diff = diff.^2;
+    %make this matrix more homogeneus to reduce noise and catch smaller
+    %movements
+    %for row=1:blockSize:ysize-blockSize
+    %    for col=1:blockSize:xsize-blockSize
+    %        diff(row:row+blockSize,col:col+blockSize) = mean(diff,'all');
+    %    end
+    %end
+    
+    %get mask from diff
     %mask -> zero if sub with new background, one otherwise
-    mask = zeros(ysize,xsize,3);
-    %matrix of differences
-    %diff = abs(background-vidFrame);
-    %build mask
-    for row=1:blockSize:ysize-blockSize
-       for col=1:blockSize:xsize-blockSize
-           avgb = mean(background(row:row+blockSize,col:col+blockSize),'all');
-           avgi = mean(vidFrame(row:row+blockSize,col:col+blockSize),'all');
-           
-            if(abs(avgb-avgi)>sensitivity)
-               if(row+blockSize < ysize && col+blockSize < xsize)
-                 mask(row:row+blockSize,col:col+blockSize,1:3) = 1;
-               end
-            end
-       end
-    end
-    mask = uint8(mask);
+    %newMask -> current mask from diff
+    %mask -> sum of old and new
+    mask(:,:,1)=diff&diff; mask(:,:,2)=mask(:,:,1); mask(:,:,3)=mask(:,:,1);
+    %opposite mask
     nmask = round(~mask);
+    %make integer for multiplication
+    mask = uint8(mask);
     nmask = uint8(nmask);
     %blocks selection
-    newFrame = vidFrame.*mask;
+    newFrame = vidFrame1.*mask;
     newBackgroundIm = newBack.*nmask;
     %add to video the overlap
     writeVideo(outputVideo,newFrame+newBackgroundIm);
+
     
 end
 close(outputVideo);
