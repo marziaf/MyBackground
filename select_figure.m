@@ -1,13 +1,17 @@
-%{v0.1 This program evaluates the differences between the
-%frames and the background, creates a mask and replaces
-%with the new background. Comparisons are very inefficients
-%}
+% in questa versione si è abbandonata l'idea della varianza e della cattura
+% del movimento. Si basa sull'estrazione dello sfondo da parte di
+% getVideoBackground e sul calcolo della differenza frame-sfondo
+%. L'esecuzione è molto più veloce.
+% L'idea è quella di aggiungere un edge detection per migliorare il
+% risultato
+
+% NON FUNZIONA ANCORA BENE
 
 video = 'multipic2.mp4';
-newBackground = 'bovaro_resize.jpg';
+newBackground = 'black.jpg';
 
 %function select_figure(video, newBackground)
-
+%% STRUCTURAL PARAMETERS 
 % get names without extension
 [~,videoName,~] = fileparts(video);
 [~,backgroundName,~] = fileparts(newBackground);
@@ -18,70 +22,57 @@ numFrames = get(VObj, 'NumberOfFrames');
 % get frame rate
 FrameRate = get(VObj,'FrameRate');
 bitPerPx = get(VObj,'BitsPerPixel');
-
-%get first frame as background (to get sizes)
-background = read(VObj,1); 
+%get background
+background = getVideoBackground(video);
 %get size of the frames
 [ysize,xsize,~] = size(background);
-
 %precision parameters
-sensitivity = 15; % more sensitivity -> less noise
-blockSize = 10;
-
+dSensitivity = 40;
 %image for new background
 newBack=imread(newBackground); %TODO deal with different sizes
 
-% PREPARE VIDEO WRITER
+%% PREPARE VIDEO WRITER
 % If target directory does not exist, create it
 foldername = 'video';
 if ~exist(foldername,'dir')
-    disp('creating folder')
     mkdir(foldername);
 end
-%outputVideo =
-%VideoWriter(strcat(foldername,'/',videoName,"_",backgroundName,".avi"));
+%outputVideo = VideoWriter(strcat(foldername,'/',videoName,"_",backgroundName,".avi"));
 %%TODO perchè ritorna errore folder video non esiste?
-outputVideo = VideoWriter('video/bov5.avi');
-outputVideo.FrameRate = FrameRate;
+reducingFactor = 1;
+outputVideo = VideoWriter('video/bov9.avi');
+outputVideo.FrameRate = FrameRate/reducingFactor;
 open(outputVideo);
-%% GET ALL THE FRAMES %TODO deal with sizes not multiple of block size
-for index=1:numFrames-1 %iterate over frames
-    disp("computing frame "+num2str(index));
+
+%% ELAB
+for index=1:reducingFactor:numFrames %iterate over frames
+    if(mod(index,5)==0) 
+        disp("computing... "+num2str(index/numFrames*100)+"%");
+    end
     %read frames
-    vidFrame1 = read(VObj,index);
-    vidFrame2 = read(VObj,index+1);
-    disp("got frames")
+    %% CALCULATE DIFFERENCE
+    vidFrame = read(VObj,index);
+    diff = double(vidFrame)-double(background); %cast to double to avoid sign problems
+    diff2d = diff(:,:,1)+diff(:,:,2)+diff(:,:,3);
+    diff2d = uint8(floor(diff2d./dSensitivity));
     %% CREATE MASK AND REPLACE BACKGROUND
-    %build differences matrix and weigth
-    diff = abs(vidFrame1-vidFrame2)./sensitivity;
-    %sum the color errors
-    diff = diff(:,:,1)+diff(:,:,2)+diff(:,:,3);
-    diff = diff.^2;
-    %make this matrix more homogeneus to reduce noise and catch smaller
-    %movements
-    %for row=1:blockSize:ysize-blockSize
-    %    for col=1:blockSize:xsize-blockSize
-    %        diff(row:row+blockSize,col:col+blockSize) = mean(diff,'all');
-    %    end
-    %end
-    
-    %get mask from diff
     %mask -> zero if sub with new background, one otherwise
-    %newMask -> current mask from diff
-    %mask -> sum of old and new
-    mask(:,:,1)=diff&diff; mask(:,:,2)=mask(:,:,1); mask(:,:,3)=mask(:,:,1);
+    nmask = diff2d&diff2d;
     %opposite mask
-    nmask = round(~mask);
+    mask = ~nmask;
     %make integer for multiplication
     mask = uint8(mask);
     nmask = uint8(nmask);
-    %blocks selection
-    newFrame = vidFrame1.*mask;
+    %apply mask
+    newFrame = vidFrame.*mask;
     newBackgroundIm = newBack.*nmask;
+    finishedFrame = newFrame+newBackgroundIm;
+    %noNoise(:,:,1) = medfilt2(finishedFrame(:,:,1));
+    %noNoise(:,:,2) = medfilt2(finishedFrame(:,:,2));
+    %noNoise(:,:,3) = medfilt2(finishedFrame(:,:,3));
     %add to video the overlap
-    writeVideo(outputVideo,newFrame+newBackgroundIm);
-
-    
+    writeVideo(outputVideo,finishedFrame);
+    %TODO filter noise
 end
 close(outputVideo);
 %end
