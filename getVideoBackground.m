@@ -1,28 +1,21 @@
-function mean = getVideoBackground(video)
-%TODO sosituire con mediana
+function [mm, frms] = getVideoBackground(video,m) %video -> video name, m -> mean or median
 %% VIDEO SETTINGS
 %video = 'multipic2.mp4';
 VObj=VideoReader(video);
 % get number of frames
 numFrames = get(VObj, 'NumberOfFrames');
 % get frame rate
-frameRate = get(VObj,'FrameRate');
 VObj=VideoReader(video);
 % get number of frames
 numFrames = get(VObj, 'NumberOfFrames');
-%skip some frames to be faster
-skip = 1;
-%get sizes
-ff = read(VObj,1);
-[ysize,xsize,~] = size(ff);
-mean = zeros(ysize,xsize,3);
-%the background should be the median of all the frames. Here it is calculated with
-%medium value
-%% GET BACKGROUND
-for index = 1:skip:numFrames
-    %disp(index);
-    thisDoubleFrame = double(read(VObj,index));
-    mean = mean + thisDoubleFrame./numFrames; %this separates the color layers
+
+% get all the frames
+frms = read(VObj, [1 numFrames]);
+if strcmp(m,'mean')
+    mm = mean(frms,4);
+elseif strcmp(m,'median')
+    mm = median(frms,4);
+else %TODO handle error
 end
-mean = uint8(mean);
+
 end
