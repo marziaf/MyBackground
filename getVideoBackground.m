@@ -4,8 +4,6 @@ function mm = getVideoBackground(video,m) %video -> video name, m -> mean or med
 %% VIDEO SETTINGS
 %video = 'multipic2.mp4';
 VObj=VideoReader(video);
-% get frame rate
-VObj=VideoReader(video);
 % get number of frames
 numFrames = get(VObj, 'NumberOfFrames');
 

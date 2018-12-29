@@ -18,7 +18,6 @@ VObj=VideoReader(video);
 numFrames = get(VObj, 'NumberOfFrames');
 % get frame rate
 FrameRate = get(VObj,'FrameRate');
-bitPerPx = get(VObj,'BitsPerPixel');
 %get background
 disp('Getting background...');
 background = getVideoBackground(video,backMode);
@@ -56,6 +55,7 @@ for index=1:numFrames %iterate over frames
     %% CREATE MASK AND REPLACE BACKGROUND
     %mask -> zero if sub with new background, one otherwise
     mask = diff2d&diff2d;
+    mask = imfill(mask,'holes');
     %opposite mask
     nmask = ~mask;
     %make integer for multiplication
