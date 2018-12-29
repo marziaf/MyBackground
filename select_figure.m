@@ -10,12 +10,22 @@ function select_figure(video, newBackground, backMode, gaussianity, dSensitivity
 
 %% STRUCTURAL PARAMETERS 
 
-%VIDEO INPUT
+%DIRECTORIES AND FILES NAMES
+%I/O dir
+defaultInputDir = 'video_in';
+defaultOutputDir = 'video_out';
+defaultBackDir = 'backgrounds';
 % get names without extension
 [~,videoName,~] = fileparts(video);
 [~,backgroundName,~] = fileparts(newBackground);
+%file names/paths
+inputName = strcat(defaultInputDir,'/',video);
+outputName = strcat(defaultOutputDir,'/',videoName,'_',backgroundName,'.avi');
+backName = strcat(defaultBackDir,'/',newBackground);
+
+%VIDEO INPUT
 % create video object
-VObj=VideoReader(video);
+VObj=VideoReader(inputName);
 % get number of frames
 numFrames = get(VObj, 'NumberOfFrames');
 % get frame rate
@@ -24,9 +34,9 @@ FrameRate = get(VObj,'FrameRate');
 %BACKGROUND
 %get new background
 disp('Getting background...');
-background = getVideoBackground(video,backMode);
+background = getVideoBackground(inputName,backMode);
 %image for new background
-newBack=imread(newBackground);
+newBack=imread(backName);
 [nrows,ncols,~] = size(background);
 %resize new background if necessary
 newBack = imresize(newBack, [nrows ncols]);
@@ -42,11 +52,9 @@ disk = strel('disk',2,4);
 
 %% PREPARE VIDEO WRITER
 % If target directory does not exist, create it
-foldername = 'video';
-if ~exist(foldername,'dir')
-    mkdir(foldername);
+if ~exist(defaultOutputDir,'dir')
+    mkdir(defaultOutputDir);
 end
-outputName = strcat(foldername,'/',videoName,'_',backgroundName,'.avi');
 outputVideo = VideoWriter(outputName);
 outputVideo.FrameRate = FrameRate; %TODO perchè è così accelerato?
 open(outputVideo);
