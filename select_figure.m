@@ -22,11 +22,14 @@ numFrames = get(VObj, 'NumberOfFrames');
 FrameRate = get(VObj,'FrameRate');
 
 %BACKGROUND
-%get background
+%get new background
 disp('Getting background...');
 background = getVideoBackground(video,backMode);
 %image for new background
-newBack=imread(newBackground); %TODO deal with different sizes
+newBack=imread(newBackground);
+[nrows,ncols,~] = size(background);
+%resize new background if necessary
+newBack = imresize(newBack, [nrows ncols]);
 
 %FILTERS
 %gaussian filter
