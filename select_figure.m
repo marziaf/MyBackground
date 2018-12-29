@@ -9,6 +9,8 @@ function select_figure(video, newBackground, backMode, gaussianity, dSensitivity
 % dSensitivity -> sensitivity to changes between frame and background (suggested 20-40)
 
 %% STRUCTURAL PARAMETERS 
+
+%VIDEO INPUT
 % get names without extension
 [~,videoName,~] = fileparts(video);
 [~,backgroundName,~] = fileparts(newBackground);
@@ -18,15 +20,22 @@ VObj=VideoReader(video);
 numFrames = get(VObj, 'NumberOfFrames');
 % get frame rate
 FrameRate = get(VObj,'FrameRate');
+
+%BACKGROUND
 %get background
 disp('Getting background...');
 background = getVideoBackground(video,backMode);
 %image for new background
 newBack=imread(newBackground); %TODO deal with different sizes
+
+%FILTERS
 %gaussian filter
 gaussback = imgaussfilt(background,gaussianity);
 bwBack = rgb2gray(gaussback);
-
+%mask filter for holes removal %TODO find best filter
+%se90 = strel('line', 3, 90);
+%se0 = strel('line', 3, 0);
+disk = strel('disk',2,4);
 
 %% PREPARE VIDEO WRITER
 % If target directory does not exist, create it
@@ -54,8 +63,10 @@ for index=1:numFrames %iterate over frames
     diff2d = uint8(floor(double(diff)./dSensitivity));
     %% CREATE MASK AND REPLACE BACKGROUND
     %mask -> zero if sub with new background, one otherwise
-    mask = diff2d&diff2d;
-    mask = imfill(mask,'holes');
+    mask = diff2d&diff2d; %calculate mask as it is
+    mask = medfilt2(mask); %filter noise
+    mask = imdilate(mask, disk); %dilate borders
+    mask = imfill(mask,'holes'); %fill the holes
     %opposite mask
     nmask = ~mask;
     %make integer for multiplication
