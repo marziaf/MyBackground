@@ -1,6 +1,6 @@
 
 %TODO Use varargin and logical indexing to detect non-specified arguments
-%(e.g. empty)
+%(e.g. empty) or check it on java code
 function select_figure(video, newBackground, backMode, gaussianity, dSensitivity)
 % video -> name of the video
 % newBackground -> name of the background to replace
