@@ -1,19 +1,28 @@
-% TODO problema: occupazione di memoria troppo alto
-
-function mm = getVideoBackground(video,m) %video -> video name, m -> mean or median
+function M = getVideoBackground(video,m) %video -> video name, m -> mean or median
 %% VIDEO SETTINGS
 %video = 'multipic2.mp4';
 VObj=VideoReader(video);
 % get number of frames
 numFrames = get(VObj, 'NumberOfFrames');
 
-% get all the frames
-frms = read(VObj, [1 numFrames]);
 if strcmp(m,'mean')
-    mm = mean(frms,4);
-    mm = uint8(mm);
+    % ATTENTION! mean is not the best solution, but can be calculated
+    % with O(1) occupation of memory, so it's preferrable in case of 
+    % long videos or little RAM. As this is used only to save space,
+    % it doesn't use matlab 'mean' function, but manually calculates it.
+    
+    VObj = VideoReader(video); % This was needed because of the coexistence
+    % of NumberOfFrames and hasFrame
+    M = double(readFrame(VObj))./numFrames;
+    while hasFrame(VObj) 
+        M = M + double(readFrame(VObj))./numFrames;
+    end
+    M = uint8(M);
+    
 elseif strcmp(m,'median')
-    mm = median(frms,4);
+    % get all the frames
+    frms = read(VObj, [1 numFrames]);
+    M = median(frms,4);
 else %TODO handle error
 end
 
