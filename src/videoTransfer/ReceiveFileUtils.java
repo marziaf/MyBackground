@@ -2,7 +2,7 @@ package videoTransfer;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import videoTransfer.VideoTransferUtils;
+import videoTransfer.TransferUtils;
 
 public class ReceiveFileUtils {
 	

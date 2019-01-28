@@ -2,7 +2,6 @@ package videoTransfer;
 
 import java.net.*;
 import java.io.*;
-import videoTransfer.ReceiveFileUtils;
 
 /**
  * A server-side class that keeps the connection alive and interacts
