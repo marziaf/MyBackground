@@ -11,10 +11,13 @@ private static Socket connectionSocket;
 		//-----------------CONNECT-----------------
 		int port = 40000;
 		ServerSocket welcomeSocket = new ServerSocket(port);
+		//we could allow multiple connections at once -> multithreading with many connection
+		//instances running in parallel?
 		connectionSocket = welcomeSocket.accept();
 		
 		//----------DIRECTORIES REFERENCES---------
 		//Root directory for the project
+		//these could be made nonstatic fields of this class?
 		File absRootDirectory = new File("");
 		String videoInDirName = "video_in/";
 		String videoOutDirName = "video_out/";
@@ -23,6 +26,14 @@ private static Socket connectionSocket;
 		File vidOutDir = new File(absRootDirectory, videoOutDirName);
 		File backDir = new File(absRootDirectory,backgroundDirName);
 		
+		
+		//TODO: get/send files through this socket or create many instances
+		//if we want to go multi-user
+		
+		//TODO: call matlab interface MatlabBinderInstance and evaluate
+		
+		//TODO: return to user relevant things (again, this should be done on
+		//separate instances in case of multi-user)
 		
 		connectionSocket.close();
 		welcomeSocket.close();

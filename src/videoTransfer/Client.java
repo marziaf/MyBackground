@@ -41,6 +41,11 @@ public class Client { // TODO try{}finally{}
 				+ "'sv'	:	Send Background		- send a custom background\n";
 		PrintStream outToSocket = new PrintStream(clientSocket.getOutputStream());
 		
+		//TODO: get intention from user
+		
+		//TODO: get/set video/background for elaboration from user
+		
+		//TODO: wait for evaluation
 		
 	}
 
