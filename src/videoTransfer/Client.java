@@ -1,11 +1,9 @@
 package videoTransfer;
 
-import java.io.PrintStream;
+import videoTransfer.VideoTransferUtils;
 import java.net.Socket;
 import java.util.Scanner;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 public class Client { // TODO try{}finally{}
 
@@ -18,7 +16,7 @@ public class Client { // TODO try{}finally{}
 		File backgroundImage = getFile("background");
 		File video = getFile("video");
 		// Send background image
-		send(clientSocket, backgroundImage);
+		VideoTransferUtils.send(clientSocket, backgroundImage);
 
 	}
 
@@ -83,69 +81,9 @@ public class Client { // TODO try{}finally{}
 		return null;
 	}
 
-	/**
-	 * Main sender method
-	 * 
-	 * @param clientSocket
-	 * @param file
-	 * @throws IOException
-	 */
-	private static void send(Socket clientSocket, File file) throws IOException {
-		// Create output stream
-		PrintStream outToClient = new PrintStream(clientSocket.getOutputStream());
-		byte[] buf = new byte[0]; // initialization of data buffer
-		convertFile(buf, file);
-		// Send file
-		sendFile(outToClient, buf);
 
-	}
 
-	/**
-	 * 
-	 * @param outToSocket - Prinstream to socket
-	 * @param buf         - buffer of bytes to send
-	 */
-	private static void sendFile(PrintStream outToSocket, byte[] buf) {
-		// send file
-		byte[] fileSize = convertIntToByteArray(buf.length);
-		// write to socket bytes from 0 to length
-		outToSocket.write(fileSize, 0, fileSize.length);
-		// System.out.println("File size sent: " + buf.length); // DEBUG
-		outToSocket.write(buf, 0, buf.length);
-		System.out.println("File sent"); // DEBUG
-		outToSocket.close();
-	}
 
-	/**
-	 * Convert file into byte buffer
-	 * 
-	 * @param buf
-	 * @param file
-	 * @throws IOException
-	 */
-	private static void convertFile(byte[] buf, File file) throws IOException {
-		buf = new byte[(int) file.length()]; // where to put files
-		FileInputStream fileInStream = new FileInputStream(file);
-		// System.out.println("Ready to send file"); //DEBUG
-		// loid up to buf.length bytes into the array
-		fileInStream.read(buf); // carica il buffer con i byte del file
-		fileInStream.close();
-	}
 
-	// TODO ricordare come viene usato
-	/**
-	 * Convert integer to byte array for data transmission
-	 * 
-	 * @param val - integer value to convert
-	 * @return - byte array
-	 */
-	private static byte[] convertIntToByteArray(int val) {
-		byte[] ret = new byte[4];
-		ret[0] = (byte) ((0xFF000000 & val) >> 24);
-		ret[1] = (byte) ((0x00FF0000 & val) >> 16);
-		ret[2] = (byte) ((0x0000FF00 & val) >> 8);
-		ret[3] = (byte) (0x000000FF & val);
-		return ret;
-	}
 
 }
