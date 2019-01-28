@@ -5,18 +5,28 @@ public class TestClass {
 	public static void main(String[] args) throws InterruptedException {
 		MatlabBinderInstance mbi = new MatlabBinderInstance();
 		Thread mbiThread = new Thread(mbi);
-
 		mbiThread.start();
 		System.out.println("mbi thread started");
-		Thread.sleep(2000);
 		mbi.start();
 		System.out.println("engine started");
-		Thread.sleep(10000);
-		synchronized(mbi.engineOnOffLock) {System.out.println("engine ready");} //waits for the engine to be ready
-		mbi.computeCommandAsynchronously("imwrite([0,0;0,0;0,0],'ehe.png')");
+		while (!mbi.isReady()) {} //can take forever... error?
+		System.out.println("engine ready"); //waits for the engine to be ready
+		mbi.computeCommandAsynchronously("imwrite([0,0;0,0;0,0],'uhe.png')");
 		while (mbi.isComputing()) {Thread.sleep(10000);System.out.println("not completed");}
-		//^seems to go on forever, even if the command actually does work
+		
+		MatlabBinderInstance mbi1 = new MatlabBinderInstance();
+		Thread mbiThread1 = new Thread(mbi);
+		mbiThread1.start();
+		System.out.println("mbi1 thread started");
+		mbi1.start();
+		System.out.println("engine1 started");
+		while (!mbi1.isReady()) {} 
+		System.out.println("engine ready"); 
+		mbi1.computeCommandAsynchronously("imwrite([0,0;0,0;0,0],'uhe1.png')");
+		while (mbi1.isComputing()) {Thread.sleep(10000);System.out.println("not completed1");}
+		
 		mbi.close();
+		mbi1.close();
 	}
 
 }
