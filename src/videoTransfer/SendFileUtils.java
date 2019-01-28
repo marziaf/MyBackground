@@ -35,14 +35,14 @@ public final class SendFileUtils {
 		// Create output stream
 		PrintStream outToClient = new PrintStream(clientSocket.getOutputStream());
 		byte[] buf = new byte[0]; // initialization of data buffer
-		convertFile(buf, file);
+		convertFile(buf, file); //TODO check
 		// Send file
 		sendFile(outToClient, buf);
 	}
 
 	/**
 	 * 
-	 * @param outToSocket - Printstream to socket
+	 * @param outToSocket - PrintStream to socket
 	 * @param buf         - buffer of bytes to send
 	 */
 	public static void sendFile(PrintStream outToSocket, byte[] buf) {
