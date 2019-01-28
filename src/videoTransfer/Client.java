@@ -10,16 +10,28 @@ import java.io.IOException;
 public class Client { // TODO try{}finally{}
 
 	public static void main(String[] args) throws Exception {
-		// -----------------CONNECT---------------------
-		Scanner sc = new Scanner(System.in);
+		// Connect
 		Socket clientSocket = null;
-		// get connection info
+		connect(clientSocket);
+		System.out.println("Connection estabilished successfully"); //DEBUG
+		// Get files to send
+		File backgroundImage = getFile("background");
+		File video = getFile("video");
+		// Send background image
+		send(clientSocket, backgroundImage);
+
+	}
+
+	/**
+	 * Try connection to socket until successful
+	 * @param clientSocket
+	 */
+	private static void connect(Socket clientSocket) {
 		boolean isValidInput = false;
 		while (!isValidInput) {
 			try {
 				// ask for connection parameters
-				System.out.println("Server address?");
-				String serverAddress = sc.next();
+				String serverAddress = getServerAddress();
 				int port = 40000;
 				// try connection
 				clientSocket = new Socket(serverAddress, port);
@@ -30,18 +42,24 @@ public class Client { // TODO try{}finally{}
 				System.err.println("Invalid input. Connection error");
 			}
 		}
-		System.out.println("Connection estabilished successfully");
-
-		File backgroundImage = getFile("background");
-
-		// TODO: get intention from user
-
-		// TODO: get/set video/background for elaboration from user
-
-		// TODO: wait for evaluation
-
 	}
-
+	
+	/**
+	 * Ask user for server to connect to
+	 * @return ip
+	 */
+	private static String getServerAddress() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Server address?");
+		return sc.next();
+	}
+	
+	/**
+	 * Get background or video name and return file
+	 * 
+	 * @param s - "background" or "video"
+	 * @return file
+	 */
 	private static File getFile(String s) {
 		Scanner scanner = new Scanner(System.in);
 		boolean gotValidName = false;
@@ -49,8 +67,8 @@ public class Client { // TODO try{}finally{}
 		while (!gotValidName) {
 			try {
 				// Ask user for file name
-				if(s.equals("background"))
-					System.out.println("Which image do you want as new background?");
+				if (s.equals("background"))
+					System.out.println("Which image do you want to set as new background?");
 				else
 					System.out.println("Which video do you want to transform?");
 				String fileName = scanner.next();
@@ -60,7 +78,7 @@ public class Client { // TODO try{}finally{}
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-			
+
 		}
 		return null;
 	}
