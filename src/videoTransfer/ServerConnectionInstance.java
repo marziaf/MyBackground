@@ -9,6 +9,26 @@ import java.io.*;
  */
 public class ServerConnectionInstance implements Runnable{
 
+	/**
+	 * Little class to keep all the possible different server requests neatly 
+	 * organized. This also makes it easier to serve them since there is only need 
+	 * to send an integer 
+	 */
+	public final class ServerRequest {
+		
+		public static final int LIST_VIDEOS = 1;
+		
+		public static final int CHOOSE_VIDEO = 2;
+		
+		public static final int SEND_VIDEO = 3;
+		
+		public static final int LIST_BACKGROUNDS = 4;
+		
+		public static final int CHOOSE_BACKGROUND = 5;
+		
+		public static final int SEND_BACKGROUND = 6;
+	}
+	
 	private PrintStream toClientStream;
     
     private BufferedReader fromClientStream;       
@@ -33,10 +53,20 @@ public class ServerConnectionInstance implements Runnable{
 	@Override
 	public void run() {
 		//TODO: implement busy-waiting serve
-		serveRequest();
+		while(true) {
+			//wait for request....
+			int requestType = 0;
+			serveRequest(requestType);
+		}
 	}
 
-	private void serveRequest() {
-		
+	private void serveRequest(int requestType) {
+		switch(requestType) {
+			case(ServerRequest.CHOOSE_BACKGROUND):
+				break;
+			//...
+			default:
+				break;
+		}
 	}
 }
