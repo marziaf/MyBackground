@@ -12,13 +12,15 @@ import java.util.concurrent.Future;
  */
 public class MatlabBinderInstance implements Runnable {
 
-	MatlabEngine engine;
+	private MatlabEngine engine;
 	
-	Boolean to_start = false;
+	public Object engineOnOffLock = new Object();
 	
-	Boolean to_stop = false;
+	private boolean to_start = false;
 	
-	Future<Void> computing = null;
+	private boolean to_stop = false;
+	
+	private Future<Void> computing = null;
 	
 	//if the final UI is Graphical, should implement a Queue to manage the
 	//commands sent to the matlab engine for evaluation
@@ -52,10 +54,13 @@ public class MatlabBinderInstance implements Runnable {
 	@Override
 	public void run() {
 		//loops to keep the engine alive, should use
-		synchronized(to_start) {
+		synchronized(engineOnOffLock) {
 			startOrStayAction();
 		}
 		
+		//close() was called, cause the while loop exited
+		try {engine.close();}
+		catch (EngineException e) {e.printStackTrace(); System.out.println("engine failed closing");}
 		to_stop = false;
 		//will now join with the main thread, because close() was called
 	}
@@ -70,17 +75,22 @@ public class MatlabBinderInstance implements Runnable {
 			if (!to_start || isComputing()) {
 				try {
 					//if it is already started or it is evaluating something, wait
-					to_start.wait();//waits for the call to start(), which sends a notify()
+					engineOnOffLock.wait();//waits for the call to start(), which sends a notify()
 				} 
 				catch (InterruptedException e) {System.out.println("Interruption waiting for engine start"); e.printStackTrace();} 
 			}
 			else {
-				try {engine = MatlabEngine.startMatlab();} 
+				try {
+					engine = MatlabEngine.startMatlab();
+					to_start = false;
+					System.out.println("MATLAB Engine started");
+				} 
 				catch (EngineException | IllegalArgumentException | IllegalStateException | InterruptedException e) {
 					System.out.println("Error starting MATLAB");
 					e.printStackTrace();
 				}
-				to_start = false;	
+				
+				
 			}	
 		}
 	}
@@ -90,16 +100,19 @@ public class MatlabBinderInstance implements Runnable {
 	 * that the Main Thread wants to stop this instance. From the MT, call 
 	 * join() to wait for this to happen.
 	 */
-	public void close() {to_stop = true;}
+	public void close() {
+		synchronized(engineOnOffLock) {to_stop = true; engineOnOffLock.notify();}
+	}
 	
 	/**
 	 * Sets the flag to start the matlab engine on the parallel task run(),
 	 * should not be called twice.
+	 * @throws InterruptedException 
 	 */
 	public void start() {
-		synchronized(to_start) { //waits for startOrStayAction for the monitor
+		synchronized(engineOnOffLock) { //waits for startOrStayAction for the monitor
 			to_start = true;
-			to_start.notify();
+			engineOnOffLock.notify();
 		}
 	}
 	
@@ -110,6 +123,6 @@ public class MatlabBinderInstance implements Runnable {
 	 * @return true if the matlab engine is currently evaluating a command sent by the server, 
 	 * false otherwise
 	 */
-	public boolean isComputing() {return computing.isDone();}
+	public boolean isComputing() {return computing != null && computing.isDone();}
 	
 }
