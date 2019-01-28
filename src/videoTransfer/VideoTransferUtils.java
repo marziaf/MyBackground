@@ -1,11 +1,7 @@
 package videoTransfer;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.net.Socket;
 
 /**
  * This class is a collection of utilities to read, write and manage the

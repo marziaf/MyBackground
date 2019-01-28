@@ -1,6 +1,6 @@
 package videoTransfer;
 
-import videoTransfer.VideoTransferUtils;
+import videoTransfer.SendFileUtils;
 import java.net.Socket;
 import java.util.Scanner;
 import java.io.File;
@@ -16,7 +16,7 @@ public class Client { // TODO try{}finally{}
 		File backgroundImage = getFile("background");
 		File video = getFile("video");
 		// Send background image
-		VideoTransferUtils.send(clientSocket, backgroundImage);
+		SendFileUtils.send(clientSocket, backgroundImage);
 
 	}
 
@@ -44,7 +44,7 @@ public class Client { // TODO try{}finally{}
 	
 	/**
 	 * Ask user for server to connect to
-	 * @return ip
+	 * @return IP
 	 */
 	private static String getServerAddress() {
 		Scanner sc = new Scanner(System.in);
