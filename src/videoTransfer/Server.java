@@ -43,11 +43,13 @@ public class Server {
 		ServerSocket welcomeSocket = new ServerSocket(Port);
 
 		while (true) {
-			System.out.print("Press 'c' to quit, 'n' to listen for new connections: ");
-			if (console.next().equals("c")) break;
+			//Ask if want to listen to new connections
+			System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
+			if (console.next().equals("q")) break;
             System.out.print("Listening for new connections @ "+ Port);
+            //Create socket
             Socket newClientSocket = welcomeSocket.accept();
-            System.out.println(" connected with "+newClientSocket.getInetAddress().getHostAddress());
+            System.out.println("Connected with "+newClientSocket.getInetAddress().getHostAddress());
             serveNewClient(newClientSocket);
         }		
 		
@@ -74,4 +76,14 @@ public class Server {
         Thread newServerInsanceThread = new Thread(newServerInstance);
         newServerInsanceThread.start();
     }
+    
+    /**
+     * Convert byte array (received from socket) to int
+     * @param ba - byte array
+     * @return - int
+     */
+	private static int convertByteArray4ToInt(byte[] ba) {
+		return (ba[0] & 0xFF) <<24 | (ba[1] & 0xFF) <<16 | 
+				(ba[2] & 0xFF) <<8 | (ba[3] & 0xFF);
+	}
 }
