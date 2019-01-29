@@ -1,7 +1,13 @@
 package videoTransfer;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.Socket;
 
 /**
  * This class is a collection of utilities to read, write and manage 
@@ -30,12 +36,68 @@ public final class TransferUtils {
            return ret;
         }
        
-//    		String optionMenu = 
-//		"Digit one of the following commands to continue\n"
-//		+ "'lv'	:	List Videos			- list the available default input videos\n"
-//		+ "'cv'	:	Choose Video		- use a default video\n"
-//		+ "'sv'	:	Send Video			- send a custom video\n"
-//		+ "'lb'	:	List Backgrounds	- list the available default backgrounds\n"
-//		+ "'cb'	:	Choose Background	- use a default background\n"
-//+ "'sv'	:	Send Background		- send a custom background\n";
+   	public static byte[] receive(BufferedInputStream bufRead) throws IOException {
+		// get the size of the message
+		byte[] sizeByte = new byte[4];
+		readFromSocket(bufRead, sizeByte, 4);
+		int sizeInt = convertByteArrayToInt(sizeByte);
+		// get the file
+		byte[] fileContent = new byte[sizeInt];
+		readFromSocket(bufRead, fileContent, sizeInt);
+		// System.out.println("file received"); //DEBUG
+		return fileContent;
+	}
+
+	public static byte[] getDataBytes(Socket socket) throws IOException{
+		// Prepare input stream
+		BufferedInputStream readFromSocket = new BufferedInputStream(socket.getInputStream());
+		BufferedReader bufRead = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		// receive data
+		return receive(readFromSocket);
+	}
+
+   /**
+   	 * Convert file into byte buffer
+   	 * 
+   	 * @param buf
+   	 * @param file
+   	 * @throws IOException
+   	 */
+   	public static byte[] convertFile(File file) throws IOException {
+   		byte[] buf = new byte[(int) file.length()]; // where to put files
+   		FileInputStream fileInStream = new FileInputStream(file);
+   		// load up to buf.length bytes into the array
+   		fileInStream.read(buf); // carica il buffer con i byte del file
+   		fileInStream.close();
+   		return buf;
+   	}
+
+   	/**
+   	 * Main file sender method
+   	 * 
+   	 * @param clientSocket
+   	 * @param file
+   	 * @throws IOException
+   	 */
+   	public static void send(Socket clientSocket, File file) throws IOException {
+   		// Create output stream
+   		PrintStream outToClient = new PrintStream(clientSocket.getOutputStream());
+   		byte[] buf = convertFile(file); //TODO check
+   		// Send file
+   		sendFile(outToClient, buf);
+   	}
+
+   	/**
+   	 * 
+   	 * @param outToSocket - PrintStream to socket
+   	 * @param buf         - buffer of bytes to send
+   	 */
+   	public static void sendFile(PrintStream outToSocket, byte[] buf) {
+   		// send file
+   		byte[] fileSize = convertIntToByteArray(buf.length);
+   		// write to socket bytes from 0 to length
+   		outToSocket.write(fileSize, 0, fileSize.length);
+   		outToSocket.write(buf, 0, buf.length);
+   		outToSocket.close();
+   }
 }
