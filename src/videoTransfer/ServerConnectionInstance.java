@@ -2,6 +2,7 @@ package videoTransfer;
 
 import java.net.*;
 import java.io.*;
+import videoTransfer.ReceiveFileUtils;
 
 /**
  * A server-side class that keeps the connection alive and interacts
@@ -32,7 +33,20 @@ public class ServerConnectionInstance implements Runnable{
     
 	@Override
 	public void run() {
+		try {
+		BufferedInputStream readFromSocket = new
+				BufferedInputStream(socket.getInputStream());
+		BufferedReader bufRead = new BufferedReader( new 
+				InputStreamReader(socket.getInputStream()));
+		//receive file
+		System.out.println("Waiting file"); //DEBUG
+		byte[] fileReceived = ReceiveFileUtils.receive(readFromSocket);
 		
+		//write to file
+		String dest = "received";
+		} catch(IOException e) {
+			System.err.println("IO Error");
+		} 
 	}
 
 }

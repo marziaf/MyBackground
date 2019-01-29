@@ -9,9 +9,8 @@ public class Client { // TODO try{}finally{}
 
 	public static void main(String[] args) throws Exception {
 		// Connect
-		Socket clientSocket = null;
-		connect(clientSocket);
-		System.out.println("Connection estabilished successfully"); //DEBUG
+		Socket clientSocket = connect();
+		System.out.println("Connection estabilished successfully"); // DEBUG
 		// Get files to send
 		File backgroundImage = getFile("background");
 		File video = getFile("video");
@@ -22,28 +21,31 @@ public class Client { // TODO try{}finally{}
 
 	/**
 	 * Try connection to socket until successful
+	 * 
 	 * @param clientSocket
 	 */
-	private static void connect(Socket clientSocket) {
+	private static Socket connect() {
 		boolean isValidInput = false;
 		while (!isValidInput) {
 			try {
 				// ask for connection parameters
 				String serverAddress = getServerAddress();
-				int port = 40000;
 				// try connection
-				clientSocket = new Socket(serverAddress, port);
+				Socket clientSocket = new Socket(serverAddress, Server.Port);
 				// TODO this doesn't throw any exception if trying to connect to
 				// non-connected hosts
 				isValidInput = true;
+				return clientSocket;
 			} catch (Exception e) {
 				System.err.println("Invalid input. Connection error");
 			}
 		}
+		return null;
 	}
-	
+
 	/**
 	 * Ask user for server to connect to
+	 * 
 	 * @return ip
 	 */
 	private static String getServerAddress() {
@@ -51,7 +53,7 @@ public class Client { // TODO try{}finally{}
 		System.out.println("Server address?");
 		return sc.next();
 	}
-	
+
 	/**
 	 * Get background or video name and return file
 	 * 
@@ -80,10 +82,5 @@ public class Client { // TODO try{}finally{}
 		}
 		return null;
 	}
-
-
-
-
-
 
 }
