@@ -1,5 +1,6 @@
 package videoTransfer;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,11 +16,13 @@ public class Server {
 	
 	//----------DIRECTORIES PREFERENCES---------
 	
-	public static final String VideoInDir = "video_in/";
+	public static final String VideoInDir = "video_in";
 	
-	public static final String VideoOutDir = "video_out/";
+	public static final String VideoOutDir = "video_out";
 	
-	public static final String BackgroundDir = "backgrounds/";
+	public static final String BackgroundDir = "backgrounds";
+	
+	public static final String ScriptsDir = "matlab_scripts";
 	
 	
 	//-----------CONNECTION PREFERENCES---------
@@ -42,13 +45,11 @@ public class Server {
 		ServerSocket welcomeSocket = new ServerSocket(Port);
 
 		while (true) {
-			//Ask if want to listen to new connections
-			System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
-			if (console.next().equals("q")) break;
+			System.out.print("Press 'c' to quit, 'n' to listen for new connections: ");
+			if (console.next().equals("c")) break;
             System.out.print("Listening for new connections @ "+ Port);
-            //Create socket
             Socket newClientSocket = welcomeSocket.accept();
-            System.out.println("Connected with "+newClientSocket.getInetAddress().getHostAddress());
+            System.out.println(" connected with "+newClientSocket.getInetAddress().getHostAddress());
             serveNewClient(newClientSocket);
         }		
 		
@@ -75,5 +76,4 @@ public class Server {
         Thread newServerInsanceThread = new Thread(newServerInstance);
         newServerInsanceThread.start();
     }
-
 }
