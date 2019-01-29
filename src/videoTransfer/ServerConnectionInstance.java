@@ -59,7 +59,6 @@ public class ServerConnectionInstance implements Runnable{
 			//wait for request....
 			//some way to wait for the connection
 			try {
-				prepareDir();
 				serveRequest();
 			} catch (Exception e) {
 				System.err.println("Error");
