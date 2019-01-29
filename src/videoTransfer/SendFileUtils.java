@@ -15,13 +15,13 @@ public final class SendFileUtils {
 	 * @param file
 	 * @throws IOException
 	 */
-	public static void convertFile(byte[] buf, File file) throws IOException {
-		buf = new byte[(int) file.length()]; // where to put files
+	public static byte[] convertFile(File file) throws IOException {
+		byte[] buf = new byte[(int) file.length()]; // where to put files
 		FileInputStream fileInStream = new FileInputStream(file);
-		// System.out.println("Ready to send file"); //DEBUG
-		// loid up to buf.length bytes into the array
+		// load up to buf.length bytes into the array
 		fileInStream.read(buf); // carica il buffer con i byte del file
 		fileInStream.close();
+		return buf;
 	}
 
 	/**
@@ -34,8 +34,7 @@ public final class SendFileUtils {
 	public static void send(Socket clientSocket, File file) throws IOException {
 		// Create output stream
 		PrintStream outToClient = new PrintStream(clientSocket.getOutputStream());
-		byte[] buf = new byte[0]; // initialization of data buffer
-		convertFile(buf, file); //TODO check
+		byte[] buf = convertFile(file); //TODO check
 		// Send file
 		sendFile(outToClient, buf);
 	}
@@ -50,9 +49,7 @@ public final class SendFileUtils {
 		byte[] fileSize = TransferUtils.convertIntToByteArray(buf.length);
 		// write to socket bytes from 0 to length
 		outToSocket.write(fileSize, 0, fileSize.length);
-		// System.out.println("File size sent: " + buf.length); // DEBUG
 		outToSocket.write(buf, 0, buf.length);
-		System.out.println("File sent"); // DEBUG
 		outToSocket.close();
 	}
 }

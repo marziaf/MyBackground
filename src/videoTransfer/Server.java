@@ -1,5 +1,6 @@
 package videoTransfer;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,11 +16,11 @@ public class Server {
 	
 	//----------DIRECTORIES PREFERENCES---------
 	
-	public static final String VideoInDir = "video_in/";
+	public static final String VideoInDir = "video_in"+File.separator;
 	
-	public static final String VideoOutDir = "video_out/";
+	public static final String VideoOutDir = "video_out"+File.separator;
 	
-	public static final String BackgroundDir = "backgrounds/";
+	public static final String BackgroundDir = "backgrounds"+File.separator;
 	
 	
 	//-----------CONNECTION PREFERENCES---------

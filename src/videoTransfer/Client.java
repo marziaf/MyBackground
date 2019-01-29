@@ -16,6 +16,7 @@ public class Client { // TODO try{}finally{}
 		File video = getFile("video");
 		// Send background image
 		SendFileUtils.send(clientSocket, backgroundImage);
+		SendFileUtils.send(clientSocket, video);
 
 	}
 
@@ -75,6 +76,7 @@ public class Client { // TODO try{}finally{}
 				// Get file and check existence
 				File file = new File(fileName);
 				gotValidName = file.isFile();
+				return file;
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
