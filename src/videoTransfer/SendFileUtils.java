@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
-import videoTransfer.VideoTransferUtils;
+import videoTransfer.TransferUtils;
 
 public final class SendFileUtils {
 	/**
@@ -47,7 +47,7 @@ public final class SendFileUtils {
 	 */
 	public static void sendFile(PrintStream outToSocket, byte[] buf) {
 		// send file
-		byte[] fileSize = VideoTransferUtils.convertIntToByteArray(buf.length);
+		byte[] fileSize = TransferUtils.convertIntToByteArray(buf.length);
 		// write to socket bytes from 0 to length
 		outToSocket.write(fileSize, 0, fileSize.length);
 		// System.out.println("File size sent: " + buf.length); // DEBUG

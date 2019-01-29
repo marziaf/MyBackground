@@ -44,7 +44,7 @@ public class Client { // TODO try{}finally{}
 	
 	/**
 	 * Ask user for server to connect to
-	 * @return IP
+	 * @return ip
 	 */
 	private static String getServerAddress() {
 		Scanner sc = new Scanner(System.in);

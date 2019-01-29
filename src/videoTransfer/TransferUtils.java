@@ -1,13 +1,17 @@
 package videoTransfer;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.net.Socket;
 
 /**
  * This class is a collection of utilities to read, write and manage the
  * connections this project needs.
  */
-public final class VideoTransferUtils {
+public final class TransferUtils {
 
 	public static int convertByteArrayToInt(byte[] ba) {
 		return ba[3] & 0xFF | (ba[2] & 0xFF) << 8 | (ba[1] & 0xFF) << 16 | (ba[0] & 0xFF) << 24;

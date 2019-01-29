@@ -1,11 +1,9 @@
 package videoTransfer;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-import videoTransfer.VideoTransferUtils;
 
 /**
  * This Class builds and manages a Server for the application. The
