@@ -38,8 +38,6 @@ public class Server {
 		
 		Scanner console = new Scanner(System.in);
 		
-        System.out.print("Server initalization... ");
-        System.out.print("Creating server-side socket to listen for connections \n");
 		ServerSocket welcomeSocket = new ServerSocket(Port);
 
 		while (true) {
@@ -64,7 +62,7 @@ public class Server {
 		
 		welcomeSocket.close();
 		}
-		catch (IOException e) {System.out.println("IO Error, invalid port?");}
+		catch (IOException e) {System.out.println("IO Error, port already in use?");}
 	}
 	
 	/**
