@@ -60,7 +60,7 @@ public class Client { // TODO try{}finally{}
 	 * 
 	 * @param s - "background" or "video"
 	 * @return file
-	 */
+	 */ //CHECK FOR INCOMPATIBLE TIPES! ONLY PNG AND AVI FORMATS
 	private static File getFile(String s) {
 		Scanner scanner = new Scanner(System.in);
 		boolean gotValidName = false;
