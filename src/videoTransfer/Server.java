@@ -42,14 +42,12 @@ public class Server {
 
 			ServerSocket welcomeSocket = new ServerSocket(Port);
 
-			while (true) {
-				System.out.print("Press 'c' to quit, 'n' to listen for new connections: ");
-				if (console.next().equals("c"))
-					break;
-				System.out.print("Listening for new connections @ " + Port);
+			System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
+			while (console.next().equals("l")) {
 				Socket newClientSocket = welcomeSocket.accept();
 				System.out.println(" connected with " + newClientSocket.getInetAddress().getHostAddress());
 				serveNewClient(newClientSocket);
+				System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
 			}
 
 			// TODO: get/send files through this socket or create many instances
