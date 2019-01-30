@@ -11,11 +11,12 @@ public class Client { // TODO try{}finally{}
 		// Connect
 		Socket clientSocket = connect();
 		System.out.println("Connection estabilished successfully"); // DEBUG
-		// Get files to send
+		// Send background
 		File backgroundImage = getFile("background");
-		File video = getFile("video");
-		// Send background image
+		System.out.println(backgroundImage.exists());
 		TransferUtils.send(clientSocket, backgroundImage);
+		// Send video
+		File video = getFile("video");
 		TransferUtils.send(clientSocket, video);
 
 	}
@@ -75,8 +76,8 @@ public class Client { // TODO try{}finally{}
 				String fileName = scanner.next();
 				// Get file and check existence
 				File file = new File(fileName);
-				gotValidName = file.isFile();
-				return file;
+				gotValidName = file.exists();
+				if(gotValidName) return file;
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
