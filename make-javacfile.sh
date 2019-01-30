@@ -14,30 +14,27 @@ export LD_LIBRARY_PATH
 #------------------------------------------------------------------------
 
 # get files to be compiled
-
-#TODO while() 
-if [ -n $1 ]
+i=1
+if [ ! -n $1 ]
 then
-	FILE=$1
-else
-	echo "Missing argument.\nUsage: $SCRIPTNAME file.java"
-	exit 1
+	echo "Missing argument.\nUsage: $SCRIPTNAME file1 file2 ..."
 fi
+# list of paths to files to be compiled
+while [ -n "$1" ]; do
+	THISFILEPATH=$SRC$1".java"
+	if [ ! -f $THISFILEPATH ]; then
+		echo "$THISFILEPATH doesn't exist"
+		exit 1;
+	else
+		FILEPATH=$FILEPATH" "$THISFILEPATH
+	fi
+	shift
+done
 
-FILEPATH="$SRC$FILE"
-pwd #DEBUG
-echo $FILEPATH #DEBUG
-
-# check existence of file
-# TODO file validity (format) non checked
-if [ ! -f $FILEPATH ]
+# if bin directory doesn't exist, then create
+if [[ ! -d $BIN ]]
 then
-	echo "Non existing file"
-	exit 1
-fi
-if [[ ! -d ./bin ]]
-then
-	mkdir ./bin
+	mkdir $BIN
 fi
 
 javac -d $BIN -classpath $MATLAB_ROOT/extern/engines/java/jar/engine.jar $FILEPATH

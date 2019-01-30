@@ -1,7 +1,10 @@
 package videoTransfer;
 
-import com.mathworks.engine.*;
 import java.util.concurrent.Future;
+
+import com.mathworks.engine.EngineException;
+import com.mathworks.engine.MatlabEngine;
+
 
 /**
  * This class binds the client-server functionality of this java program with
