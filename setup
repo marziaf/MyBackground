@@ -1,8 +1,14 @@
 #!/bin/bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1
 
 chmod 755 make-javacfile.sh
+if [ -f start-client ]; then
+	chmod 755 start-client
+fi
+if [ -f start-server ]; then
+	chmod 755 start-server
+fi
 
 source var.sh
 # Compile java files

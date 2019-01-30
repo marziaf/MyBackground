@@ -10,6 +10,14 @@ chmod 755 setup
 ./setup
 ```
 ## Execution
-//TODO
+To start client run `start-client`
+```
+cd path/to/MyBackground
 
+./start-client
+```
+To start server
+```
+./start-server
+```
 ### DEMO

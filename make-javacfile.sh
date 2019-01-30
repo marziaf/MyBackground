@@ -33,7 +33,3 @@ fi
 
 javac -d $BIN -classpath $MATLAB_ROOT/extern/engines/java/jar/engine.jar $FILEPATH
 
-#NOTE: per poi eseguire si dovrà:
-#java -classpath .:$MATLAB_ROOT/extern/engines/java/jar/engine.jar $FILE
-#ricordare di usare il nome senza estensione, qui
-
