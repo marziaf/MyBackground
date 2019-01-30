@@ -44,7 +44,7 @@ public final class TransferUtils {
 		// get the file
 		byte[] fileContent = new byte[sizeInt];
 		readFromSocket(bufRead, fileContent, sizeInt);
-		// System.out.println("file received"); //DEBUG
+		bufRead.close();
 		return fileContent;
 	}
 

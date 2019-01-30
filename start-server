@@ -3,7 +3,6 @@
 cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1
 
 source var.sh
-cd $BIN
-java -classpath .:$MATLAB_ROOT/extern/engines/java/jar/engine.jar $PACKAGE.Server
+java -classpath .:$MATLAB_ROOT/extern/engines/java/jar/engine.jar -cp $BIN $PACKAGE.Server
 
 

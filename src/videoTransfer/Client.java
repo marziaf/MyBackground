@@ -13,7 +13,6 @@ public class Client { // TODO try{}finally{}
 		System.out.println("Connection estabilished successfully"); // DEBUG
 		// Send background
 		File backgroundImage = getFile("background");
-		System.out.println(backgroundImage.exists());
 		TransferUtils.send(clientSocket, backgroundImage);
 		// Send video
 		File video = getFile("video");
@@ -68,6 +67,7 @@ public class Client { // TODO try{}finally{}
 		// Ask file name until a valid file is given
 		while (!gotValidName) {
 			try {
+				
 				// Ask user for file name
 				if (s.equals("background"))
 					System.out.println("Which image do you want to set as new background?");

@@ -1,10 +1,10 @@
 package videoTransfer;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.concurrent.CountedCompleter;
 
 /**
  * This Class builds and manages a Server for the application. The
@@ -16,13 +16,18 @@ public class Server {
 	
 	//----------DIRECTORIES PREFERENCES---------
 	
-	public static final String VideoInDir = "video_in";
+	//Ho almeno momentaneamente tolto il final, perchè crea dipendenze dalla directory di esecuzione,
+	//che cambia se eseguito da eclipse o terminale
+	private static String maindir = "ServerBuffer"+File.separator;
+	public static  File MainDir = new File("ServerBuffer");
 	
-	public static final String VideoOutDir = "video_out";
+	public static File VideoInDir = new File(maindir+"video_in");
 	
-	public static final String BackgroundDir = "backgrounds";
+	public static File VideoOutDir = new File(maindir+"video_out");
 	
-	public static final String ScriptsDir = "matlab_scripts";
+	public static File BackgroundDir = new File(maindir+"backgrounds");
+	
+	public static File ScriptsDir = new File("matlab_scripts");
 	
 	
 	//-----------CONNECTION PREFERENCES---------
@@ -44,6 +49,14 @@ public class Server {
 			// used to identify which file belongs to whom (otherwise the various instances may go blep
 			// when saving their files)
 			int instanceCounter = 1;
+			
+			//Verify existence of buffer directories where to save files
+			if(!VideoInDir.exists()) VideoInDir.mkdirs();
+			if(!BackgroundDir.exists()) BackgroundDir.mkdir();
+			if(!VideoOutDir.exists()) VideoOutDir.mkdir();
+			System.out.println(VideoInDir.getAbsolutePath());
+
+
 
 			System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
 			while (console.next().equals("l")) {
