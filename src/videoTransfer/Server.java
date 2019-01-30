@@ -65,7 +65,9 @@ public class Server {
 				serveNewClient(newClientSocket, instanceCounter++);
 				System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
 			}
-			console.close();
+			//TODO check if it's needed
+
+//			console.close();
 
 			// TODO: get/send files through this socket or create many instances
 			// if we want to go multi-user
@@ -74,8 +76,8 @@ public class Server {
 
 			// TODO: return to user relevant things (again, this should be done on
 			// separate instances in case of multi-user)
-
-			welcomeSocket.close();
+//TODO check if it's needed
+			//welcomeSocket.close();
 		} catch (IOException e) {
 			System.out.println("IO Error, port already in use?");
 		}

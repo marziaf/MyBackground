@@ -3,6 +3,7 @@ package videoTransfer;
 import videoTransfer.TransferUtils;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.PrimitiveIterator.OfDouble;
 import java.io.File;
 
 public class Client { // TODO try{}finally{}
@@ -10,13 +11,16 @@ public class Client { // TODO try{}finally{}
 	public static void main(String[] args) throws Exception {
 		// Connect
 		Socket clientSocket = connect();
-		System.out.println("Connection estabilished successfully"); // DEBUG
+		if (clientSocket.isConnected())
+			System.out.println("Connection estabilished successfully"); // DEBUG
+		File backgroundImage = getFile("background", "Which image do you want to set as new background?");		
+		File video = getFile("video","Which video do you want to transform?");
 		// Send background
-		File backgroundImage = getFile("background");
 		TransferUtils.send(clientSocket, backgroundImage);
 		// Send video
-		File video = getFile("video");
 		TransferUtils.send(clientSocket, video);
+		
+		clientSocket.close();
 
 	}
 
@@ -27,21 +31,22 @@ public class Client { // TODO try{}finally{}
 	 */
 	private static Socket connect() {
 		boolean isValidInput = false;
+		Socket clientSocket = null;
 		while (!isValidInput) {
 			try {
 				// ask for connection parameters
 				String serverAddress = getServerAddress();
 				// try connection
-				Socket clientSocket = new Socket(serverAddress, Server.Port);
+				clientSocket = new Socket(serverAddress, Server.Port);
 				// TODO this doesn't throw any exception if trying to connect to
 				// non-connected hosts
 				isValidInput = true;
-				return clientSocket;
+			
 			} catch (Exception e) {
 				System.err.println("Invalid input. Connection error");
 			}
 		}
-		return null;
+		return clientSocket;
 	}
 
 	/**
@@ -52,7 +57,9 @@ public class Client { // TODO try{}finally{}
 	private static String getServerAddress() {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Server address?");
-		return sc.next();
+		String input = sc.next();
+		if (input.equals("l")) return "127.0.0.1";
+		return input;
 	}
 
 	/**
@@ -61,29 +68,27 @@ public class Client { // TODO try{}finally{}
 	 * @param s - "background" or "video"
 	 * @return file
 	 */
-	private static File getFile(String s) {
+	private static File getFile(String s, String question) {
 		Scanner scanner = new Scanner(System.in);
-		boolean gotValidName = false;
 		// Ask file name until a valid file is given
-		while (!gotValidName) {
+		while (true) {
 			try {
-				
-				// Ask user for file name
-				if (s.equals("background"))
-					System.out.println("Which image do you want to set as new background?");
-				else
-					System.out.println("Which video do you want to transform?");
+				System.out.println(question);
+
 				String fileName = scanner.next();
 				// Get file and check existence
 				File file = new File(fileName);
-				gotValidName = file.exists();
-				if(gotValidName) return file;
+				System.out.println(file.getAbsolutePath());
+				if (file.exists()) {
+					//scanner.close();
+					return file;
+				}
+				
 			} catch (Exception e) {
+				e.printStackTrace();
 				// TODO: handle exception
-			}
-
+			} 
 		}
-		return null;
 	}
 
 }

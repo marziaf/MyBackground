@@ -44,7 +44,7 @@ public final class TransferUtils {
 		// get the file
 		byte[] fileContent = new byte[sizeInt];
 		readFromSocket(bufRead, fileContent, sizeInt);
-		bufRead.close();
+		//bufRead.close();
 		return fileContent;
 	}
 
@@ -98,6 +98,5 @@ public final class TransferUtils {
    		// write to socket bytes from 0 to length
    		outToSocket.write(fileSize, 0, fileSize.length);
    		outToSocket.write(buf, 0, buf.length);
-   		outToSocket.close();
    }
 }

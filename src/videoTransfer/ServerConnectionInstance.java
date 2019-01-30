@@ -43,10 +43,10 @@ public class ServerConnectionInstance implements Runnable {
 			socket = newClientSocket;
 			toClientStream = new PrintStream(newClientSocket.getOutputStream());
 			fromClientStream = new BufferedReader(new InputStreamReader(newClientSocket.getInputStream()));
-			//matlabInterface = new MatlabBinderInstance();
-			//Thread mIThread = new Thread(matlabInterface);
-			//mIThread.start();
-			//matlabInterface.start();
+			// matlabInterface = new MatlabBinderInstance();
+			// Thread mIThread = new Thread(matlabInterface);
+			// mIThread.start();
+			// matlabInterface.start();
 		} catch (IOException e) {
 			System.out.print("Failed to create Server connection instance, socket IO problem\n");
 		}
@@ -70,15 +70,18 @@ public class ServerConnectionInstance implements Runnable {
 		getVideo();
 		// third thing: accept selected algorithm
 		getAlgorithm();
+
 		// fourth thing: elaborate
-		//elaborate();
+		// elaborate();
 		// wait for elaboration...
-		//while (matlabInterface.isComputing()) {
-		}
+		// while (matlabInterface.isComputing()) {
 
 		// fifth thing: send back the video
-		//sendBackVideo();
-	//}
+		// sendBackVideo();
+		// }
+		socket.close();
+
+	}
 
 	/**
 	 * Common interface: the two algorithms choose the video in the fold

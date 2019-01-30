@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import videoTransfer.TransferUtils;
-
+@Deprecated
 public final class SendFileUtils {
 	/**
 	 * Convert file into byte buffer

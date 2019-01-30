@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 import videoTransfer.TransferUtils;
-
+@Deprecated
 public class ReceiveFileUtils {
 
 	public static byte[] receive(BufferedInputStream bufRead) throws IOException {
