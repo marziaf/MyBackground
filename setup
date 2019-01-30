@@ -6,4 +6,5 @@ chmod 755 make-javacfile.sh
 
 source var.sh
 # Compile java files
-./make-javacfile.sh $SRC*
+FILES=$(ls $SRC | sed 's/\.java'//g)
+./make-javacfile.sh $FILES
