@@ -1,2 +1,9 @@
-#TODO call scripts
-#TODO chmod
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+chmod 755 make-javacfile.sh
+
+source var.sh
+# Compile java files
+./make-javacfile.sh $SRC*
