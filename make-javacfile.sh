@@ -13,7 +13,9 @@ LD_LIBRARY_PATH=$MATLAB_ROOT/bin/glnxa64:$MATLAB_ROOT/sys/os/glnxa64:$LD_LIBRARY
 export LD_LIBRARY_PATH
 #------------------------------------------------------------------------
 
-# get file to be compiled
+# get files to be compiled
+
+#TODO while() 
 if [ -n $1 ]
 then
 	FILE=$1
