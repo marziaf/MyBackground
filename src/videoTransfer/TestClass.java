@@ -1,9 +1,13 @@
 package videoTransfer;
+import java.util.concurrent.ExecutionException;
+
+import com.mathworks.engine.EngineException;
+import com.mathworks.engine.MatlabEngine;
 
 public class TestClass {
 
-	public static void main(String[] args) throws InterruptedException {
-		MatlabBinderInstance mbi = new MatlabBinderInstance();
+	public static void main(String[] args) throws InterruptedException, EngineException, ExecutionException {
+		/*MatlabBinderInstance mbi = new MatlabBinderInstance();
 		Thread mbiThread = new Thread(mbi);
 		mbiThread.start();
 		System.out.println("mbi thread started");
@@ -26,7 +30,14 @@ public class TestClass {
 		while (mbi1.isComputing()) {Thread.sleep(10000);System.out.println("not completed1");}
 		
 		mbi.close();
-		mbi1.close();
+		mbi1.close();*/
+		
+		MatlabEngine engine = MatlabEngine.startMatlab();
+		Object[] result = engine.feval(1, "test.m");
+		System.out.println(result[0]);
+		System.out.println("Finished");
+		engine.close();
+		
 	}
 
 }

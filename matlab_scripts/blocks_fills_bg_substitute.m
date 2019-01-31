@@ -2,7 +2,7 @@
 % algorithm
 
 %use the final settings file to create the parameters to be used
-prepareSettingsMotionAlg.m;
+prepareSettingsMotionAlg;
 
 %start the actual algorithm that extracts the background
 constructBackgroundMotionAlg;

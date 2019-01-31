@@ -70,7 +70,8 @@ public class ServerConnectionInstance implements Runnable {
 		getVideo();
 		// third thing: accept selected algorithm
 		getAlgorithm();
-
+		//TODO verificare che lo script funzioni con matlab
+		//TODO in caso contrario è necessario fare cd bin anziche java -cp bin
 		// fourth thing: elaborate
 		// elaborate();
 		// wait for elaboration...
@@ -113,13 +114,11 @@ public class ServerConnectionInstance implements Runnable {
 
 	private void getVideo() throws IOException {
 		byte[] videoData = TransferUtils.getDataBytes(socket);
-		System.out.println("Got video"); // DEBUG
 		writeData(videoData, Server.VideoInDir + File.separator + "vid" + instanceNumber);
 	}
 
 	private void getBackground() throws IOException {
 		byte[] backgroundData = TransferUtils.getDataBytes(socket);
-		System.out.println("Got background"); // DEBUG
 		// write to file
 		writeData(backgroundData, Server.BackgroundDir + File.separator + "new_bg" + instanceNumber);
 	}
