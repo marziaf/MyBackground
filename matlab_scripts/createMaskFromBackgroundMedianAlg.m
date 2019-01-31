@@ -1,6 +1,7 @@
 % this section creates the mask which represents the background portion of
 % every frame
 
+%---------------NEW BACKGROUND PREPARATION---------------------- 
 [nrows,ncols,~] = size(background);
 % resize new background if necessary
 newBack = imresize(newBack, [nrows ncols]);
@@ -12,11 +13,7 @@ bwBack = rgb2gray(gaussback);
 % mask filter for holes removal %TODO find best filter
 disk = strel('disk',4,4);
 
-% PREPARE VIDEO WRITER
-% If target directory does not exist, create it
-if ~exist(defaultOutputDir,'dir')
-    mkdir(defaultOutputDir);
-end
+%-------------------VIDEO WRITER PREPARATION----------------------
 outputVideo = VideoWriter(video_out);
 outputVideo.FrameRate = FrameRate; %TODO perchè è così accelerato?
 open(outputVideo);

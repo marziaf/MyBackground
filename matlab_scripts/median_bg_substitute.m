@@ -9,3 +9,5 @@ constructBackgroundMedianAlg;
 
 % do the final "frame-by-frame" mask creation and write it to file
 createMaskFromBackgroundMedianAlg;
+
+clear all;

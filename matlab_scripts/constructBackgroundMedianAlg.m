@@ -1,7 +1,8 @@
 % do the estimate of the background from the video using the median of the
 % frames
 
-if strcmp(m,'mean')
+%---------------------BACKGROUND CONSTRUCTION----------------------------
+if strcmp(backMode,'mean')
     % ATTENTION! mean is not the best solution, but can be calculated
     % with O(1) occupation of memory, so it's preferrable in case of 
     % long videos or little RAM. As this is used only to save space,
@@ -15,7 +16,7 @@ if strcmp(m,'mean')
     end
     background = uint8(background);
     
-elseif strcmp(m,'median')
+elseif strcmp(backMode,'median')
     % get all the frames
     frms = read(VObj, [1 numFrames]);
     background = median(frms,4);
