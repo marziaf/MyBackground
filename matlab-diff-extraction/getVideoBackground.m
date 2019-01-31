@@ -23,7 +23,7 @@ elseif strcmp(m,'median')
     % get all the frames
     frms = read(VObj, [1 numFrames]);
     M = median(frms,4);
-else %TODO handle error
+else
 end
 
 end

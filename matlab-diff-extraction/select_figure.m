@@ -12,9 +12,10 @@ function select_figure(video, newBackground, backMode, gaussianity, dSensitivity
 
 %% DIRECTORIES AND FILES NAMES
 % I/O dir
-defaultInputDir = 'video_in';
-defaultOutputDir = 'video_out';
-defaultBackDir = 'backgrounds';
+serverDir='../ServerBuffer/';
+defaultInputDir = strcat(serverDir,'video_in');
+defaultOutputDir = strcat(serverDir,'video_out');
+defaultBackDir = strcat(serverDir,'backgrounds');
 
 % get names without extension
 [~,videoName,~] = fileparts(video);

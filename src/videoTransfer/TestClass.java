@@ -35,10 +35,9 @@ public class TestClass {
 		mbi1.close();*/
 		
 		MatlabEngine engine = MatlabEngine.startMatlab();
-		Path path = Paths.get("");
-		System.out.println(path.toAbsolutePath());
-		Object[] result = engine.feval(1, "/home/marzia/Desktop/Laboratorio di internet e multimedia/MyBackground/bin/test.m");
-		System.out.println(result[0]);
+		engine.eval("cd ../matlab-diff-extraction");
+		double result = engine.feval(1, "new");
+		System.out.println(result);
 		System.out.println("Finished");
 		engine.close();
 		
