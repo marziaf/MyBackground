@@ -14,7 +14,7 @@ function select_figure(video, newBackground, backMode, gaussianity, dSensitivity
 % I/O dir
 serverDir='../ServerBuffer/';
 defaultInputDir = strcat(serverDir,'video_in');
-defaultOutputDir = strcat(serverDir,'video_out');
+defaultOutputDir = strcat(serverDir,'video_out'); %TODO why executing via java this is not recognised?
 defaultBackDir = strcat(serverDir,'backgrounds');
 
 % get names without extension
@@ -52,12 +52,9 @@ bwBack = rgb2gray(gaussback);
 disk = strel('disk',4,4);
 
 %% PREPARE VIDEO WRITER
-% If target directory does not exist, create it
-if ~exist(defaultOutputDir,'dir')
-    mkdir(defaultOutputDir);
-end
+
 outputVideo = VideoWriter(outputName);
-outputVideo.FrameRate = FrameRate; %TODO perchè è così accelerato?
+outputVideo.FrameRate = FrameRate;
 open(outputVideo);
 
 %% -------------------ELABORATION----------------------------------

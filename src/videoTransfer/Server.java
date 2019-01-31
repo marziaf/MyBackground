@@ -54,7 +54,6 @@ public class Server {
 			if(!VideoInDir.exists()) VideoInDir.mkdirs();
 			if(!BackgroundDir.exists()) BackgroundDir.mkdir();
 			if(!VideoOutDir.exists()) VideoOutDir.mkdir();
-			System.out.println(VideoInDir.getAbsolutePath());
 
 
 

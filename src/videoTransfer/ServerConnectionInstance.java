@@ -1,6 +1,14 @@
 package videoTransfer;
 
 import java.net.*;
+import java.util.concurrent.ExecutionException;
+
+import com.mathworks.engine.EngineException;
+import com.mathworks.engine.MatlabEngine;
+import com.mathworks.engine.MatlabExecutionException;
+import com.mathworks.engine.MatlabSyntaxException;
+
+
 import java.io.*;
 
 /**
@@ -69,7 +77,12 @@ public class ServerConnectionInstance implements Runnable {
 		// second thing: accept incoming video
 		getVideo();
 		// third thing: accept selected algorithm
-		getAlgorithm();
+		try {
+			getAlgorithm();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		//TODO verificare che lo script funzioni con matlab
 		//TODO in caso contrario è necessario fare cd bin anziche java -cp bin
 		// fourth thing: elaborate
@@ -113,17 +126,33 @@ public class ServerConnectionInstance implements Runnable {
 	}
 
 	private void getVideo() throws IOException {
+		// Get video data
 		byte[] videoData = TransferUtils.getDataBytes(socket);
-		writeData(videoData, Server.VideoInDir + File.separator + "vid" + instanceNumber);
+		String videoName = Server.VideoInDir + File.separator + "vid" + instanceNumber;
+		receivedVideo = new File(videoName);
+		// Save video
+		writeData(videoData, videoName);
 	}
 
 	private void getBackground() throws IOException {
+		// Get bg data
 		byte[] backgroundData = TransferUtils.getDataBytes(socket);
+		String bgName = Server.BackgroundDir + File.separator + "bg" + instanceNumber;
+		receivedBackground = new File(bgName);
 		// write to file
-		writeData(backgroundData, Server.BackgroundDir + File.separator + "new_bg" + instanceNumber);
+		writeData(backgroundData, bgName);
 	}
 
-	private void getAlgorithm() {
+	//TODO this is only a test
+	private void getAlgorithm() throws IllegalArgumentException, 
+	IllegalStateException, InterruptedException, MatlabExecutionException, 
+	MatlabSyntaxException, ExecutionException {
+		
+		MatlabEngine engine = MatlabEngine.startMatlab();
+		engine.eval("cd ../matlab-diff-extraction"); //TODO not so brute-forced
+		engine.feval(0, "select_figure", receivedVideo.getName(), receivedBackground.getName(), "median", 5, 30); //TODO not so brute force
+		System.out.println("Finished");
+		engine.close();
 
 	}
 

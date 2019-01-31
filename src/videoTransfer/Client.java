@@ -78,7 +78,6 @@ public class Client { // TODO try{}finally{}
 				String fileName = scanner.next();
 				// Get file and check existence
 				File file = new File(fileName);
-				System.out.println(file.getAbsolutePath());
 				if (file.exists()) {
 					//scanner.close();
 					return file;
