@@ -1,4 +1,6 @@
 package videoTransfer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.ExecutionException;
 
 import com.mathworks.engine.EngineException;
@@ -33,7 +35,9 @@ public class TestClass {
 		mbi1.close();*/
 		
 		MatlabEngine engine = MatlabEngine.startMatlab();
-		Object[] result = engine.feval(1, "test.m");
+		Path path = Paths.get("");
+		System.out.println(path.toAbsolutePath());
+		Object[] result = engine.feval(1, "/home/marzia/Desktop/Laboratorio di internet e multimedia/MyBackground/bin/test.m");
 		System.out.println(result[0]);
 		System.out.println("Finished");
 		engine.close();
