@@ -53,7 +53,6 @@ public final class TransferUtils {
 	public static byte[] getDataBytes(Socket socket) throws IOException{
 		// Prepare input stream
 		BufferedInputStream readFromSocket = new BufferedInputStream(socket.getInputStream());
-		BufferedReader bufRead = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		// receive data
 		return receive(readFromSocket);
 	}

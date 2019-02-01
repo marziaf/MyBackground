@@ -31,6 +31,10 @@ public class Client { // TODO try{}finally{}
 		System.out.println("Choose the algorithm (1->median-based, default, 2->motion-based): ");
 		int algorithmToUse = (console.next().equals("2")) ? 2 : 1;
 		
+		//get the output name wanted
+		System.out.println("Where do you want to save the new video?");
+		String newVideoPath = console.nextLine(); //check for invalid input
+		
 		// Send background
 		TransferUtils.send(clientSocket, backgroundImage);
 		// Send video
@@ -45,8 +49,6 @@ public class Client { // TODO try{}finally{}
 		//receive the new video
 		byte[] newVideo = TransferUtils.receive(new BufferedInputStream(clientSocket.getInputStream()));
 		//write it to file
-		System.out.println("Where do you want to save the new video?");
-		String newVideoPath = console.nextLine(); //check for invalid input
 		File newVideoFile = new File(newVideoPath);
 		newVideoFile.mkdirs();
 		TransferUtils.writeDataToFile(newVideo, newVideoPath);

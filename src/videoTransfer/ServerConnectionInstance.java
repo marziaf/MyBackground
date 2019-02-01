@@ -33,10 +33,10 @@ public class ServerConnectionInstance implements Runnable {
 			socket = newClientSocket;
 			toClientStream = new PrintStream(newClientSocket.getOutputStream());
 			fromClientStream = new BufferedInputStream(newClientSocket.getInputStream());
-			// matlabInterface = new MatlabBinderInstance();
-			// Thread mIThread = new Thread(matlabInterface);
-			// mIThread.start();
-			// matlabInterface.start();
+			matlabInterface = new MatlabBinderInstance();
+			Thread mIThread = new Thread(matlabInterface);
+			mIThread.start();
+			matlabInterface.start();
 		} catch (IOException e) {
 			System.out.print("Failed to create Server connection instance, socket IO problem\n");
 		}
@@ -64,7 +64,10 @@ public class ServerConnectionInstance implements Runnable {
 		// fourth thing: elaborate
 		elaborate(algorithmToUse);
 		// wait for elaboration...
-		while (matlabInterface.isComputing()) {}
+		while (matlabInterface.isComputing()) {
+			try {Thread.sleep(10000);} catch (InterruptedException e) {}
+			System.out.println("Still computing...");
+		}
 
 		// fifth thing: send back the video
 		sendBackVideo();
@@ -85,9 +88,8 @@ public class ServerConnectionInstance implements Runnable {
 				+ instanceNumber + ".avi';" + "newBackground = '.."+ File.separator + Server.BackgroundDir + File.separator + "new_bg"
 				+ instanceNumber + ".png';" + "video_out = '.." + File.separator + Server.VideoOutDir + File.separator + "new_vid"
 				+ instanceNumber + ".avi';");
-		while (matlabInterface.isComputing()) {
-		}
-
+		while (matlabInterface.isComputing()) {} //shouldn't take long
+		
 		// let's estimate the background
 		switch (algorithmToUse) {
 		case 2:
