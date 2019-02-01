@@ -2,8 +2,11 @@
 N_ITERATIONS_BCP = N_ITERATIONS;
 
 
-% -----------------------LOW-LEVEL MASK FILTERING-----------------------
-N_ITERATIONS = 1
+% ---------------------DRAFT BACKGROUND ESTIMATION-----------------------
+disp('Draft background estimation');
+% we could compress all the info using a mean/median to calculate the
+% starting bg?
+N_ITERATIONS = 1;
 proj_moveMaskCreate;
 save_mask_full = zeros([height, width, 3],'logical');
 save_mask_full(:,:,1) = save_mask(:,:,1);
@@ -15,14 +18,14 @@ clear('save_mask_full');
 
 
 % -----------------------HIGH-LEVEL MASK CREATION-----------------------
-N_ITERATIONS_ = N_ITERATIONS_BCP;
+disp('High-level mask creation');
+N_ITERATIONS = N_ITERATIONS_BCP;
 proj_moveMaskCreate;
 
 
 % -----------------------HIGH-LEVEL MASK FILTERING-----------------------
-%sarebbe top un filtro che imposta bassa smussatura temporale (sigma
-%temporale molto grande)per avere no ghosting e alta (ovvero essere meno "buoni") smussatura
-%spaziale... una gaussiana multivariata elissoidale ...
+% smoothens out the mask for less noisy contours, making the ones too much
+disp('high-level mask filtering');
 filtered = imgaussfilt3(double(save_mask), FILTER_SIGMA);
 maxfilt = max(filtered, [], [1,2]);
 for (f = 1:nframes)
@@ -44,6 +47,7 @@ clear('lala'); clear('filtered');
 
 
 % -----------------BACKGROUND CANDIDATE CREATION----------------------
+disp('Background candidate contruction');
 bg_mask = ~save_mask;
 
 % prealloccazione
@@ -77,4 +81,5 @@ for (fr = 2:nframes)
     
     % problema: e se una maschera save non ? giusta e mangia un poco il
     % soggetto? devo avere dei bei parametri!
+    imshow(background_candidate);
 end

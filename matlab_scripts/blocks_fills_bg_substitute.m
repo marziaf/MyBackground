@@ -8,7 +8,9 @@ prepareSettingsMotionAlg;
 constructBackgroundMotionAlg;
 
 % do the final "frame-by-frame" mask creation
-createMaskFromBackground;
+createMaskFromBackgroundMotionAlg;
 
 % substitute the background from the video using the mask
-substituteBackgroundFromMask;
+substituteBackgroundFromMaskMotionAlg;
+
+clear all;
