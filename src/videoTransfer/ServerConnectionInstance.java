@@ -1,14 +1,6 @@
 package videoTransfer;
 
 import java.net.*;
-import java.util.concurrent.ExecutionException;
-
-import com.mathworks.engine.EngineException;
-import com.mathworks.engine.MatlabEngine;
-import com.mathworks.engine.MatlabExecutionException;
-import com.mathworks.engine.MatlabSyntaxException;
-
-
 import java.io.*;
 
 /**
@@ -19,21 +11,11 @@ public class ServerConnectionInstance implements Runnable {
 
 	private PrintStream toClientStream;
 
-	private BufferedReader fromClientStream;
+	private BufferedInputStream fromClientStream;
 
 	private Socket socket;
 
 	private MatlabBinderInstance matlabInterface;
-
-	private File receivedVideo;
-
-	private File receivedBackground;
-
-	/**
-	 * Specifies the algorithm to use for estimating the background 1 -> median on
-	 * the frames (default) 2 -> motion blocks and fills
-	 */
-	private int algorithmToUse = 1;
 
 	private int instanceNumber;
 
@@ -50,7 +32,7 @@ public class ServerConnectionInstance implements Runnable {
 			instanceNumber = instanceNum;
 			socket = newClientSocket;
 			toClientStream = new PrintStream(newClientSocket.getOutputStream());
-			fromClientStream = new BufferedReader(new InputStreamReader(newClientSocket.getInputStream()));
+			fromClientStream = new BufferedInputStream(newClientSocket.getInputStream());
 			// matlabInterface = new MatlabBinderInstance();
 			// Thread mIThread = new Thread(matlabInterface);
 			// mIThread.start();
@@ -77,37 +59,31 @@ public class ServerConnectionInstance implements Runnable {
 		// second thing: accept incoming video
 		getVideo();
 		// third thing: accept selected algorithm
-		try {
-			getAlgorithm();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		//TODO verificare che lo script funzioni con matlab
-		//TODO in caso contrario è necessario fare cd bin anziche java -cp bin
+		int algorithmToUse = getAlgorithm();
+
 		// fourth thing: elaborate
-		// elaborate();
+		elaborate(algorithmToUse);
 		// wait for elaboration...
-		// while (matlabInterface.isComputing()) {
+		while (matlabInterface.isComputing()) {}
 
 		// fifth thing: send back the video
-		// sendBackVideo();
-		// }
+		sendBackVideo();
+		
+		//to be left open if we want it to be left alive for another computation
 		socket.close();
-
 	}
 
 	/**
 	 * Common interface: the two algorithms choose the video in the fold
 	 */
-	private void elaborate() {
+	private void elaborate(int algorithmToUse) {
 		while (!matlabInterface.isReady()) {
 		}
 
 		// tell the matlab workspace about the files we want to work on
-		matlabInterface.computeCommandAsynchronously("video = '.." + Server.VideoInDir + File.separator + "vid"
-				+ instanceNumber + ".avi';" + "newBackground = '.." + Server.BackgroundDir + File.separator + "new_bg"
-				+ instanceNumber + ".png';" + "video_out = '.." + Server.VideoOutDir + File.separator + "new_vid"
+		matlabInterface.computeCommandAsynchronously("video = '.." + File.separator + Server.VideoInDir + File.separator + "vid"
+				+ instanceNumber + ".avi';" + "newBackground = '.."+ File.separator + Server.BackgroundDir + File.separator + "new_bg"
+				+ instanceNumber + ".png';" + "video_out = '.." + File.separator + Server.VideoOutDir + File.separator + "new_vid"
 				+ instanceNumber + ".avi';");
 		while (matlabInterface.isComputing()) {
 		}
@@ -126,44 +102,27 @@ public class ServerConnectionInstance implements Runnable {
 	}
 
 	private void getVideo() throws IOException {
-		// Get video data
 		byte[] videoData = TransferUtils.getDataBytes(socket);
-		String videoName = Server.VideoInDir + File.separator + "vid" + instanceNumber;
-		receivedVideo = new File(videoName);
-		// Save video
-		writeData(videoData, videoName);
+		TransferUtils.writeDataToFile(videoData, Server.VideoInDir + File.separator + "vid" + instanceNumber);
 	}
 
 	private void getBackground() throws IOException {
-		// Get bg data
 		byte[] backgroundData = TransferUtils.getDataBytes(socket);
-		String bgName = Server.BackgroundDir + File.separator + "bg" + instanceNumber;
-		receivedBackground = new File(bgName);
 		// write to file
-		writeData(backgroundData, bgName);
+		TransferUtils.writeDataToFile(backgroundData, Server.BackgroundDir + File.separator + "new_bg" + instanceNumber);
 	}
 
-	//TODO this is only a test
-	private void getAlgorithm() throws IllegalArgumentException, 
-	IllegalStateException, InterruptedException, MatlabExecutionException, 
-	MatlabSyntaxException, ExecutionException {
-		
-		MatlabEngine engine = MatlabEngine.startMatlab();
-		engine.eval("cd ../matlab-diff-extraction"); //TODO not so brute-forced
-		engine.feval(0, "select_figure", receivedVideo.getName(), receivedBackground.getName(), "median", 5, 30); //TODO not so brute force
-		System.out.println("Finished");
-		engine.close();
-
+	private int getAlgorithm() throws IOException {
+		byte[] algData = new byte[4];
+		TransferUtils.readFromSocket(fromClientStream, algData, 4);
+		return TransferUtils.convertByteArrayToInt(algData);
 	}
 
-	private void sendBackVideo() {
-
+	private void sendBackVideo() throws IOException {
+		TransferUtils.send(socket,
+			new File(Server.VideoOutDir + File.separator + "new_vid" + instanceNumber + ".avi"));		
 	}
 
-	private static void writeData(byte[] data, String filename) throws FileNotFoundException, IOException {
-		FileOutputStream fileOutputStream = new FileOutputStream(filename);
-		fileOutputStream.write(data);
-		fileOutputStream.close();
-	}
+
 
 }

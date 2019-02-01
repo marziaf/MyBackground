@@ -18,6 +18,7 @@ public class Server {
 	
 	//Ho almeno momentaneamente tolto il final, perchè crea dipendenze dalla directory di esecuzione,
 	//che cambia se eseguito da eclipse o terminale
+	
 	private static String maindir = "ServerBuffer"+File.separator;
 	public static  File MainDir = new File("ServerBuffer");
 	
@@ -54,6 +55,7 @@ public class Server {
 			if(!VideoInDir.exists()) VideoInDir.mkdirs();
 			if(!BackgroundDir.exists()) BackgroundDir.mkdir();
 			if(!VideoOutDir.exists()) VideoOutDir.mkdir();
+			System.out.println(VideoInDir.getAbsolutePath());
 
 
 
@@ -64,18 +66,8 @@ public class Server {
 				serveNewClient(newClientSocket, instanceCounter++);
 				System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
 			}
+
 			//TODO check if it's needed
-
-//			console.close();
-
-			// TODO: get/send files through this socket or create many instances
-			// if we want to go multi-user
-
-			// TODO: call matlab interface MatlabBinderInstance and evaluate
-
-			// TODO: return to user relevant things (again, this should be done on
-			// separate instances in case of multi-user)
-//TODO check if it's needed
 			//welcomeSocket.close();
 		} catch (IOException e) {
 			System.out.println("IO Error, port already in use?");
