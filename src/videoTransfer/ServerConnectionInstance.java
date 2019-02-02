@@ -1,7 +1,8 @@
 package videoTransfer;
 
 import java.net.*;
-
+import java.time.Duration;
+import java.time.Instant;
 import java.io.*;
 
 /**
@@ -88,7 +89,11 @@ public class ServerConnectionInstance implements Runnable {
 	private void elaborate(int algorithmToUse) {
 		System.out.println("Inside algorithm to use"); //DEBUG
 		//TODO wtf?
-		while(!matlabInterface.isReady()) {}
+		Instant t1 = Instant.now();
+		Instant t2 = Instant.now();
+		while(!matlabInterface.isReady() || Duration.between(t1, t2).toMillis() > 10000) {
+			t2 = Instant.now();
+		}
 		/*try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
