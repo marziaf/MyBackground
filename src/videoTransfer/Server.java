@@ -16,9 +16,6 @@ public class Server {
 	
 	//----------DIRECTORIES PREFERENCES---------
 	
-	//Ho almeno momentaneamente tolto il final, perchè crea dipendenze dalla directory di esecuzione,
-	//che cambia se eseguito da eclipse o terminale
-	
 	private static String maindir = "ServerBuffer"+File.separator;
 	
 	public static  File MainDir = new File("ServerBuffer");
@@ -44,32 +41,31 @@ public class Server {
 	 */
 	public static void main(String[] args) {
 		try {
-
+			
 			Scanner console = new Scanner(System.in);
 
 			ServerSocket welcomeSocket = new ServerSocket(Port);
-			// used to identify which file belongs to whom (otherwise the various instances may go blep
+			// instanceCounter used to identify which files belong to whom (otherwise the various instances may go blep
 			// when saving their files)
 			int instanceCounter = 1;
 			
-			//Verify existence of buffer directories where to save files
+			// Verify existence of buffer directories where to save files
 			if(!VideoInDir.exists()) VideoInDir.mkdirs();
 			if(!BackgroundDir.exists()) BackgroundDir.mkdir();
 			if(!VideoOutDir.exists()) VideoOutDir.mkdir();
 			System.out.println(VideoInDir.getAbsolutePath());
 
-
-
+			// Ask if to keep listening for connections or close (stop listening to connection requests)
 			System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
 			while (console.next().equals("l")) {
 				Socket newClientSocket = welcomeSocket.accept();
-				System.out.println(" connected with " + newClientSocket.getInetAddress().getHostAddress());
+				System.out.println("Connected with " + newClientSocket.getInetAddress().getHostAddress());
+				// Serve client requests
 				serveNewClient(newClientSocket, instanceCounter++);
 				System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
 			}
+			console.close();
 
-			//TODO check if it's needed
-			//welcomeSocket.close();
 		} catch (IOException e) {
 			System.out.println("IO Error, port already in use?");
 		}
