@@ -1,6 +1,7 @@
-% do the estimate of the background from the video using the median of the
+% estimate the background from the video using the median of the
 % frames
 
+disp("CONSTRUCTBACKGROUND RUNNING") %DEBUG
 %---------------------BACKGROUND CONSTRUCTION----------------------------
 if strcmp(backMode,'mean')
     % ATTENTION! mean is not the best solution, but can be calculated
@@ -20,5 +21,7 @@ elseif strcmp(backMode,'median')
     % get all the frames
     frms = read(VObj, [1 numFrames]);
     background = median(frms,4);
-else %TODO handle error
+else 
+    %ERROR
+    disp("BackMode you set is not valid")
 end

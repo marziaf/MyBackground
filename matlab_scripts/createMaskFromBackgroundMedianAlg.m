@@ -1,5 +1,6 @@
 % this section creates the mask which represents the background portion of
 % every frame
+disp("CREATING VIDEO") %DEBUG
 % ------------------INPUT PARAMETERS------------------------------
 % BACKGROUND CONSTRUCTION NEEDED!
 % video -> name of the video

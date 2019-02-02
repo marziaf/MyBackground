@@ -19,6 +19,9 @@ public class ServerConnectionInstance implements Runnable {
 	private MatlabBinderInstance matlabInterface;
 
 	private int instanceNumber;
+	
+	private String baseVideoInName = "video";
+	private String baseBackgroundInName = "image";
 
 	/**
 	 * Constructs a new ServerConnectionInstance, using the given socket to create
@@ -30,10 +33,12 @@ public class ServerConnectionInstance implements Runnable {
 	 */
 	public ServerConnectionInstance(Socket newClientSocket, int instanceNum) {
 		try {
+			// Set connection-related stuff
 			instanceNumber = instanceNum;
 			socket = newClientSocket;
 			toClientStream = new PrintStream(newClientSocket.getOutputStream());
 			fromClientStream = new BufferedInputStream(newClientSocket.getInputStream());
+			// Matlab engine //TODO check
 			matlabInterface = new MatlabBinderInstance();
 			Thread mIThread = new Thread(matlabInterface);
 			mIThread.start();
@@ -50,7 +55,6 @@ public class ServerConnectionInstance implements Runnable {
 			serveRequest();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.err.println("Error");
 		}
 	}
 
@@ -61,14 +65,12 @@ public class ServerConnectionInstance implements Runnable {
 		getVideo();
 		// third thing: accept selected algorithm
 		int algorithmToUse = getAlgorithm();
-
 		// fourth thing: elaborate
 		elaborate(algorithmToUse);
 		// wait for elaboration...
-		 while (matlabInterface.isComputing()) { try {Thread.sleep(10000);} catch
-		 (InterruptedException e) {} System.out.println("Still computing..."); }
-		 
-
+		//TODO send client the progress bar
+		while (matlabInterface.isComputing()) { try {Thread.sleep(10000);} catch
+		(InterruptedException e) {} System.out.println("Still computing..."); }
 
 		// fifth thing: send back the video
 		sendBackVideo();
@@ -84,14 +86,17 @@ public class ServerConnectionInstance implements Runnable {
 	private void elaborate(int algorithmToUse) {
 		while (!matlabInterface.isReady()) {
 		}
+		System.out.println("Ready to set workspace"); //DEBUG
 
-		// tell the matlab workspace about the files we want to work on
+		// set matlab workspace with the files we want to work on
 		matlabInterface.computeCommandAsynchronously("video = '.." + File.separator + Server.VideoInDir + File.separator
 				+ "vid" + instanceNumber + ".avi';" + "newBackground = '.." + File.separator + Server.BackgroundDir
 				+ File.separator + "new_bg" + instanceNumber + ".png';" + "video_out = '.." + File.separator
 				+ Server.VideoOutDir + File.separator + "new_vid" + instanceNumber + ".avi';");
 		while (matlabInterface.isComputing()) {
 		} // shouldn't take long
+
+		System.out.println("Ready to calculate background image"); //DEBUG
 
 		// let's estimate the background
 		switch (algorithmToUse) {
@@ -102,20 +107,23 @@ public class ServerConnectionInstance implements Runnable {
 		case 1:
 		default:
 			matlabInterface.computeCommandAsynchronously(
-					"run('" + Server.ScriptsDir + File.separator + "median_bg_substitute.m')");
+					"run('" + Server.ScriptsDir + File.separator + "median_bg_substitute.m')"); 
+			//TODO set definitive parameters for median algorithm
 		}
 	}
 
 	private void getVideo() throws IOException {
 		byte[] videoData = TransferUtils.getDataBytes(socket);
-		TransferUtils.writeDataToFile(videoData, Server.VideoInDir + File.separator + "vid" + instanceNumber);
+		// write to file
+		TransferUtils.writeDataToFile(videoData, 
+				Server.VideoInDir + File.separator + baseVideoInName + instanceNumber);
 	}
 
 	private void getBackground() throws IOException {
 		byte[] backgroundData = TransferUtils.getDataBytes(socket);
 		// write to file
 		TransferUtils.writeDataToFile(backgroundData,
-				Server.BackgroundDir + File.separator + "new_bg" + instanceNumber);
+				Server.BackgroundDir + File.separator + baseBackgroundInName + instanceNumber);
 	}
 
 	private int getAlgorithm() throws IOException {

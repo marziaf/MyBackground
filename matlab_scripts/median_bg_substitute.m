@@ -1,6 +1,6 @@
 % this will be the actual file called by java to execute the median-based
 % algorithm
-
+disp("MEDIAN_BG_SUBSTITUTE RUNNING") %DEBUG
 % use the final settings file to create the parameters to be used
 prepareSettingsMedianAlg;
 

@@ -114,7 +114,6 @@ public class Client {
 				String fileName = scanner.next(); // should use nextLine, paths can have spaces
 				// Get file and check existence
 				File file = new File(fileName);
-				System.out.println(file.getAbsolutePath());
 				if (file.exists()) {
 					// scanner.close();
 					return file;
