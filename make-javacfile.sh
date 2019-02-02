@@ -15,7 +15,7 @@ then
 fi
 # list of paths to files to be compiled
 while [ -n "$1" ]; do
-	THISFILEPATH=$SRC$1".java"
+	THISFILEPATH=$FILESRC$1".java"
 	if [ ! -f $THISFILEPATH ]; then
 		echo "$THISFILEPATH doesn't exist"
 		exit 1;
@@ -26,10 +26,10 @@ while [ -n "$1" ]; do
 done
 
 # if bin directory doesn't exist, then create
-if [[ ! -d $BIN ]]
+if [[ ! -d $FILEBIN ]]
 then
-	mkdir $BIN
+	mkdir $FILEBIN
 fi
 
-javac -d $BIN -classpath $MATLAB_ROOT/extern/engines/java/jar/engine.jar $FILEPATH
+javac -d $FILEBIN -classpath $MAT_ROOT/extern/engines/java/jar/engine.jar $FILEPATH
 

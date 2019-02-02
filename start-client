@@ -3,5 +3,5 @@
 cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1
 
 source var.sh
-java -cp $BIN $PACKAGE.Client
+java -cp $FILEBIN $PACKAGE.Client
 

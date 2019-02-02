@@ -9,6 +9,8 @@ gaussianity = 5; % gaussian factor for blurring (suggested 5)
 dSensitivity = 30; % sensitivity to changes between frame and background (suggested 20-40)
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % Video objects setting
+pwd %DEBUG
+disp(video); %DEBUG
 VObj = VideoReader(video); % video name got from java code
 numFrames = get(VObj, 'NumberOfFrames');
 VObj = VideoReader(video); %NumberOfFrames sometimes "consumes the frames", reload

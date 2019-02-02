@@ -1,8 +1,8 @@
 # source and bin dir
 PACKAGE="videoTransfer"
-SRC="./src/$PACKAGE/"
-BIN="bin/"
+FILESRC="./src/$PACKAGE/"
+FILEBIN="bin/"
 # Matlab setup
-MATLAB_ROOT=$(which matlab | grep -oe "^.*/R20....")
-LD_LIBRARY_PATH=${MATLAB_ROOT}bin/glnxa64:${MATLAB_ROOT}sys/os/glnxa64:$LD_LIBRARY_PATH
+MAT_ROOT=$(which matlab | grep -oe "^.*/R20....")
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MAT_ROOT}bin/glnxa64:${MAT_ROOT}sys/os/glnxa64
 export LD_LIBRARY_PATH

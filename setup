@@ -12,5 +12,5 @@ fi
 
 source var.sh
 # Compile java files
-FILES=$(ls $SRC | sed 's/\.java'//g)
+FILES=$(ls $FILESRC | sed 's/\.java'//g)
 ./make-javacfile.sh $FILES
