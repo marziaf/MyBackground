@@ -62,14 +62,8 @@ public class ServerConnectionInstance implements Runnable {
 		// second thing: accept incoming video
 		getVideo();
 		// third thing: accept selected algorithm
-<<<<<<< HEAD
 		int algorithmToUse = getAlgorithm();
 
-=======
-		getAlgorithm();
-		//TODO verificare che lo script funzioni con matlab
-		//TODO in caso contrario è necessario fare cd bin anziche java -cp bin
->>>>>>> parent of 50c2c49... Still not solved "the specified folder video_out does not exist"
 		// fourth thing: elaborate
 		// elaborate(algorithmToUse);
 		// wait for elaboration...
@@ -130,17 +124,12 @@ public class ServerConnectionInstance implements Runnable {
 
 	private void getVideo() throws IOException {
 		byte[] videoData = TransferUtils.getDataBytes(socket);
-<<<<<<< HEAD
 		TransferUtils.writeDataToFile(videoData, Server.VideoInDir + File.separator + "vid" + instanceNumber);
-=======
-		writeData(videoData, Server.VideoInDir + File.separator + "vid" + instanceNumber);
->>>>>>> parent of 50c2c49... Still not solved "the specified folder video_out does not exist"
 	}
 
 	private void getBackground() throws IOException {
 		byte[] backgroundData = TransferUtils.getDataBytes(socket);
 		// write to file
-<<<<<<< HEAD
 		TransferUtils.writeDataToFile(backgroundData,
 				Server.BackgroundDir + File.separator + "new_bg" + instanceNumber);
 	}
@@ -149,17 +138,6 @@ public class ServerConnectionInstance implements Runnable {
 		byte[] algData = new byte[4];
 		TransferUtils.readFromSocket(fromClientStream, algData, 4);
 		return TransferUtils.convertByteArrayToInt(algData);
-=======
-		writeData(backgroundData, Server.BackgroundDir + File.separator + "new_bg" + instanceNumber);
-	}
-
-	private void getAlgorithm() {
-
-	}
-
-	private void sendBackVideo() {
-
->>>>>>> parent of 50c2c49... Still not solved "the specified folder video_out does not exist"
 	}
 
 	private void sendBackVideo() throws IOException {
