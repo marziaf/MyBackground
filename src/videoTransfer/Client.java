@@ -6,9 +6,15 @@ import java.util.Scanner;
 import java.util.PrimitiveIterator.OfDouble;
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 
-public class Client { // TODO try{}finally{}
+public class Client {
+	
+	private static File video; // video to send
+	private static File backgroundImage; // background to send
+	private static File outputVideo;
+	private static String outputDir = "video_out";
 
 	public static void main(String[] args) throws Exception {
 		
@@ -21,41 +27,33 @@ public class Client { // TODO try{}finally{}
 		else 
 			{System.out.println("Problem during connection, aborting..."); return;}
 		
+		// USER PARAMETERS
 		//get the background
-		File backgroundImage = getFile("background", "Which image do you want to set as new background?");		
-		
+		backgroundImage = getFile("background", "Which image do you want to set as new background?");		
 		//get the input video
-		File video = getFile("video","Which video do you want to transform?");
-		
+		video = getFile("video","Which video do you want to transform?");
 		//get the algorithm
-		System.out.println("Choose the algorithm (1->median-based, default, 2->motion-based): ");
+		System.out.println("Choose the algorithm (1->median-based (default) 2->motion-based): ");
 		int algorithmToUse = (console.nextLine().equals("2")) ? 2 : 1;
 		
-		//get the output name wanted
-		System.out.println("Where do you want to save the new video?");
-		String newVideoPath = console.nextLine();
-		while (!TransferUtils.isValidFileInput(newVideoPath)) {
-			newVideoPath = console.nextLine(); //check
-		}
 		
 		// Send background
 		TransferUtils.send(clientSocket, backgroundImage);
 		// Send video
 		TransferUtils.send(clientSocket, video);
 		// send algorithm to use
-		byte[] alg = TransferUtils.convertIntToByteArray(algorithmToUse);
-		PrintStream toServerStream = new PrintStream(clientSocket.getOutputStream());
-		TransferUtils.send(toServerStream, alg);
+		sendAlgorithmChoice(clientSocket, algorithmToUse);
 		
 		//server-side computation...
-		
-		//receive the new video
 		System.out.println("Waiting for eleboration and download of the file...");
+		
+		// get the output name
+		outputVideo = new File(outputDir+File.separator+video.getName()+"_"+backgroundImage.getName());
+		// get elaborated video
 		byte[] newVideo = TransferUtils.receive(new BufferedInputStream(clientSocket.getInputStream()));
-		//write it to file
-		File newVideoFile = new File(newVideoPath);
-		newVideoFile.getParentFile().mkdirs(); 
-		TransferUtils.writeDataToFile(newVideo, newVideoPath);
+		// write received video to file
+		outputVideo.getParentFile().mkdirs(); 
+		TransferUtils.writeDataToFile(newVideo, outputVideo.getAbsolutePath());
 		
 		clientSocket.close();
 	}
@@ -125,6 +123,12 @@ public class Client { // TODO try{}finally{}
 				// TODO: handle exception
 			} 	
 		}
+	}
+	
+	private static void sendAlgorithmChoice(Socket clientSocket, int algorithmToUse) throws IOException{
+		byte[] alg = TransferUtils.convertIntToByteArray(algorithmToUse);
+		PrintStream toServerStream = new PrintStream(clientSocket.getOutputStream());
+		TransferUtils.send(toServerStream, alg);	
 	}
 	
 

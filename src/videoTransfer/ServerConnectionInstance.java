@@ -2,8 +2,6 @@ package videoTransfer;
 
 import java.net.*;
 
-import com.mathworks.engine.MatlabEngine;
-
 import java.io.*;
 
 /**
@@ -36,10 +34,10 @@ public class ServerConnectionInstance implements Runnable {
 			socket = newClientSocket;
 			toClientStream = new PrintStream(newClientSocket.getOutputStream());
 			fromClientStream = new BufferedInputStream(newClientSocket.getInputStream());
-			// matlabInterface = new MatlabBinderInstance();
-			// Thread mIThread = new Thread(matlabInterface);
-			// mIThread.start();
-			// matlabInterface.start();
+			matlabInterface = new MatlabBinderInstance();
+			Thread mIThread = new Thread(matlabInterface);
+			mIThread.start();
+			matlabInterface.start();
 		} catch (IOException e) {
 			System.out.print("Failed to create Server connection instance, socket IO problem\n");
 		}
@@ -65,34 +63,20 @@ public class ServerConnectionInstance implements Runnable {
 		int algorithmToUse = getAlgorithm();
 
 		// fourth thing: elaborate
-		// elaborate(algorithmToUse);
+		elaborate(algorithmToUse);
 		// wait for elaboration...
-		/*
-		 * while (matlabInterface.isComputing()) { try {Thread.sleep(10000);} catch
-		 * (InterruptedException e) {} System.out.println("Still computing..."); }
-		 */
+		 while (matlabInterface.isComputing()) { try {Thread.sleep(10000);} catch
+		 (InterruptedException e) {} System.out.println("Still computing..."); }
+		 
 
-		fuckingTest();
 
 		// fifth thing: send back the video
-		// sendBackVideo();
+		sendBackVideo();
 
 		// to be left open if we want it to be left alive for another computation
 		socket.close();
 	}
 
-	private void fuckingTest() {
-		try {
-			MatlabEngine engine = MatlabEngine.startMatlab();
-			//engine.eval("cd ../matlab-diff-extraction");
-			//double result = engine.feval(1, "new");
-			//System.out.println(result);
-			//System.out.println("Finished");
-			engine.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Common interface: the two algorithms choose the video in the fold
