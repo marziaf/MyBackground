@@ -1,13 +1,22 @@
 % this section creates the mask which represents the background portion of
 % every frame
+% ------------------INPUT PARAMETERS------------------------------
+% BACKGROUND CONSTRUCTION NEEDED!
+% video -> name of the video
+% newBackground -> name of the background to replace
+% backMode -> modality to detect background ('median' (suggested), 'mean' (use only if little memory is available))
+% gaussianity (To be set to default)-> gaussian factor for blurring (suggested 5)
+% dSensitivity (To be set to default)-> sensitivity to changes between frame and background (suggested 20-40)
 
 %---------------NEW BACKGROUND PREPARATION---------------------- 
-[nrows,ncols,~] = size(background);
+% get the size of video frames from the just calculated background
+[nrows,ncols,~] = size(background); 
 % resize new background if necessary
 newBack = imresize(newBack, [nrows ncols]);
 
 % FILTERS
-% gaussian filter
+% filters are used to correct video imperfections
+% gaussian filter -> smooth image
 gaussback = imgaussfilt(background,gaussianity);
 bwBack = rgb2gray(gaussback);
 % mask filter for holes removal %TODO find best filter
@@ -15,7 +24,7 @@ disk = strel('disk',4,4);
 
 %-------------------VIDEO WRITER PREPARATION----------------------
 outputVideo = VideoWriter(video_out);
-outputVideo.FrameRate = FrameRate; %TODO perchè è così accelerato?
+outputVideo.FrameRate = FrameRate; %TODO perchï¿½ ï¿½ cosï¿½ accelerato?
 open(outputVideo);
 
 % -------------------ELABORATION----------------------------------
