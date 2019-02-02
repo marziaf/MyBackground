@@ -49,7 +49,7 @@ public class Client {
 		System.out.println("Waiting for eleboration and download of the file...");
 
 		// get the output name
-		outputVideo = new File(outputDir + File.separator + video.getName() + "_" + backgroundImage.getName());
+		outputVideo = new File(outputDir + File.separator + backgroundImage.getName() + "_" + video.getName());
 		// get elaborated video
 		byte[] newVideo = TransferUtils.receive(new BufferedInputStream(clientSocket.getInputStream()));
 		// write received video to file

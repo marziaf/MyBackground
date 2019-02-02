@@ -91,11 +91,10 @@ public class ServerConnectionInstance implements Runnable {
 
 		// set matlab workspace with the files we want to work on
 		matlabInterface.computeCommandAsynchronously("video = '.." + File.separator + Server.VideoInDir + File.separator
-				+ "vid" + instanceNumber + ".avi';" + "newBackground = '.." + File.separator + Server.BackgroundDir
-				+ File.separator + "new_bg" + instanceNumber + ".png';" + "video_out = '.." + File.separator
-				+ Server.VideoOutDir + File.separator + "new_vid" + instanceNumber + ".avi';");
-		while (matlabInterface.isComputing()) {
-		} // shouldn't take long
+				+ baseVideoInName + instanceNumber + "';" + "newBackground = '.." + File.separator + Server.BackgroundDir
+				+ File.separator + baseBackgroundInName + instanceNumber + "';" + "video_out = '.." + File.separator
+				+ Server.VideoOutDir + File.separator + "new_vid" + instanceNumber + "';");
+		while (matlabInterface.isComputing()) {} // shouldn't take long
 
 		System.out.println("Ready to calculate background image"); //DEBUG
 
