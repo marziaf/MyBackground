@@ -23,6 +23,8 @@ public class MatlabBinderInstance implements Runnable {
 	private boolean to_stop = false;
 
 	private Future<Void> computing = null;
+	
+	private boolean started = false;
 
 	// if the final UI is Graphical, should implement a Queue to manage the
 	// commands sent to the matlab engine for evaluation
@@ -95,6 +97,7 @@ public class MatlabBinderInstance implements Runnable {
 			} else {
 				try {
 					engine = MatlabEngine.startMatlab();
+					started = true;
 					to_start = false;
 					System.out.println("MATLAB Engine started");
 				} catch (EngineException | IllegalArgumentException | IllegalStateException | InterruptedException e) {
@@ -144,7 +147,7 @@ public class MatlabBinderInstance implements Runnable {
 	}
 
 	public boolean isReady() {
-		return engine != null;
+		return started;
 	}
 
 }

@@ -87,7 +87,14 @@ public class ServerConnectionInstance implements Runnable {
 	 */
 	private void elaborate(int algorithmToUse) {
 		System.out.println("Inside algorithm to use"); //DEBUG
-		while (!matlabInterface.isReady()) {}
+		//TODO wtf?
+		while(!matlabInterface.isReady()) {}
+		/*try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		System.out.println("Ready to set workspace"); //DEBUG
 
 		// set matlab workspace with the files we want to work on
