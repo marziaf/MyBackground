@@ -29,11 +29,14 @@ public class Client { // TODO try{}finally{}
 		
 		//get the algorithm
 		System.out.println("Choose the algorithm (1->median-based, default, 2->motion-based): ");
-		int algorithmToUse = (console.next().equals("2")) ? 2 : 1;
+		int algorithmToUse = (console.nextLine().equals("2")) ? 2 : 1;
 		
 		//get the output name wanted
 		System.out.println("Where do you want to save the new video?");
-		String newVideoPath = console.nextLine(); //check for invalid input
+		String newVideoPath = console.nextLine();
+		while (!TransferUtils.isValidFileInput(newVideoPath)) {
+			newVideoPath = console.nextLine(); //check
+		}
 		
 		// Send background
 		TransferUtils.send(clientSocket, backgroundImage);
@@ -47,10 +50,11 @@ public class Client { // TODO try{}finally{}
 		//server-side computation...
 		
 		//receive the new video
+		System.out.println("Waiting for eleboration and download of the file...");
 		byte[] newVideo = TransferUtils.receive(new BufferedInputStream(clientSocket.getInputStream()));
 		//write it to file
 		File newVideoFile = new File(newVideoPath);
-		newVideoFile.mkdirs();
+		newVideoFile.getParentFile().mkdirs(); 
 		TransferUtils.writeDataToFile(newVideo, newVideoPath);
 		
 		clientSocket.close();
@@ -107,7 +111,7 @@ public class Client { // TODO try{}finally{}
 			try {
 				System.out.println(question);
 
-				String fileName = scanner.next();
+				String fileName = scanner.next(); //should use nextLine, paths can have spaces
 				// Get file and check existence
 				File file = new File(fileName);
 				System.out.println(file.getAbsolutePath());
@@ -119,8 +123,10 @@ public class Client { // TODO try{}finally{}
 			} catch (Exception e) {
 				e.printStackTrace();
 				// TODO: handle exception
-			} 
+			} 	
 		}
 	}
+	
+
 
 }

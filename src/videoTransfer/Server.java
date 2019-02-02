@@ -20,6 +20,7 @@ public class Server {
 	//che cambia se eseguito da eclipse o terminale
 	
 	private static String maindir = "ServerBuffer"+File.separator;
+	
 	public static  File MainDir = new File("ServerBuffer");
 	
 	public static File VideoInDir = new File(maindir+"video_in");

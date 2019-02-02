@@ -113,4 +113,13 @@ public final class TransferUtils {
 		fileOutputStream.write(data);
 		fileOutputStream.close();
 	}
+	
+	public static boolean isValidFileInput(String path) {
+		try {
+			path = (new File(path)).getCanonicalPath();
+		}
+		catch (Exception e) {return false;}
+		return true;
+	}
+
 }
