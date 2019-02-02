@@ -140,7 +140,7 @@ public class MatlabBinderInstance implements Runnable {
 	 *         the server, false otherwise
 	 */
 	public boolean isComputing() {
-		return computing != null && computing.isDone();
+		return computing != null && !computing.isDone();
 	}
 
 	public boolean isReady() {
