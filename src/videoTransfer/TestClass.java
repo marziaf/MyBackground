@@ -9,7 +9,7 @@ import com.mathworks.engine.MatlabEngine;
 public class TestClass {
 
 	public static void main(String[] args) throws InterruptedException, EngineException, ExecutionException {
-		/*MatlabBinderInstance mbi = new MatlabBinderInstance();
+		MatlabBinderInstance mbi = new MatlabBinderInstance();
 		Thread mbiThread = new Thread(mbi);
 		mbiThread.start();
 		System.out.println("mbi thread started");
@@ -32,15 +32,15 @@ public class TestClass {
 		while (mbi1.isComputing()) {Thread.sleep(10000);System.out.println("not completed1");}
 		
 		mbi.close();
-		mbi1.close();*/
+		mbi1.close();
 		
-		MatlabEngine engine = MatlabEngine.startMatlab();
+		/*MatlabEngine engine = MatlabEngine.startMatlab();
 		engine.eval("cd ../matlab-diff-extraction");
 		double result = engine.feval(1, "new");
 		System.out.println(result);
 		System.out.println("Finished");
 		engine.close();
-		
+		*/
 	}
 
 }

@@ -86,8 +86,8 @@ public class ServerConnectionInstance implements Runnable {
 	 * Common interface: the two algorithms choose the video in the fold
 	 */
 	private void elaborate(int algorithmToUse) {
-		while (!matlabInterface.isReady()) {
-		}
+		System.out.println("Inside algorithm to use"); //DEBUG
+		while (!matlabInterface.isReady()) {}
 		System.out.println("Ready to set workspace"); //DEBUG
 
 		// set matlab workspace with the files we want to work on
