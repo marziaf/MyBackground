@@ -14,7 +14,7 @@ import java.io.PrintStream;
  */
 public class Client {
 
-	// This parameters are used to define files chosen from user
+	// These parameters are used to define files chosen from user
 	private static File video; 						// Video to send
 	private static File backgroundImage;			// Background to send
 	private static File outputVideo; 				// Where the final video is stored
