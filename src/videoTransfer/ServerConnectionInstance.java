@@ -154,11 +154,12 @@ public class ServerConnectionInstance implements Runnable {
 	 * @throws IOException
 	 */
 	private void sendBackVideo() throws IOException {
-		TransferUtils.send(socket, new File(finalPathVideoOut + ".avi")); // TODO necessary .avi? (not an issue)
+		TransferUtils.send(socket, finalPathVideoOut); 
+		// on windows, matlab automatically puts an avi-extension to the file, if it is missing
 	}
 	
 	/**
-	 * Sets paths for file storage
+	 * Prepare the various paths that are needed for the scripts, based on the ones provided 
 	 */
 	private void setFilePaths() {
 		finalPathBackground = new File(

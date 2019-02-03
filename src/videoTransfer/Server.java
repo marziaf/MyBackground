@@ -8,8 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-import org.omg.PortableServer.ServantActivator;
-
 /**
  * This Class builds and manages a Server for the application. The
  * Server listens for connections on the desired port and, acting as 
@@ -77,7 +75,9 @@ public class Server {
     }
     
     /**
-     * If directories don't exist, create them
+     * Method that takes care of preparing the right environment for the various
+     * {@link ServerConnectionInstance}s to run on: directories and paths expected
+     * by all the matlab commands and scripts are prepared here.
      */
     private static void createDirectories() {
     	// check if launched from bin or not
