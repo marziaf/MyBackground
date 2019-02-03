@@ -81,7 +81,7 @@ public class ServerConnectionInstance implements Runnable {
 		elaborate(algorithmToUse);
 		// wait for elaboration...
 		// TODO send client the progress bar
-		System.out.println("Got what I needed, now I should be doing matlab stuff");
+		//System.out.println("Got what I needed, now I should be doing matlab stuff"); //DEBUG
 		// TODO DEBUG
 		while (matlabInterface.isComputing()) {
 			try {

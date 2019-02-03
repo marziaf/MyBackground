@@ -32,9 +32,10 @@ open(outputVideo);
 
 for index=1:numFrames %iterate over frames %TODO use readframe instead
     % progress status
-    if (index%5 == 0)
-       progress = progress +((index/numFrames)-5); % where 5 is time taken
+    if (mod(index,5) == 0)
+       progress = ((index/numFrames)*100); % not considering time for background construction
        % for background computing
+       disp(progress)
     end
     % CALCULATE DIFFERENCE
     % get frame

@@ -5,11 +5,9 @@
 prepareSettingsMedianAlg;
 
 % progress keeps the value of the general progress of computation
-progress = 0;
+progress = 0; % Doesn't consider time for background extraction
 % start the actual algorithm that extracts the background
 constructBackgroundMedianAlg;
-progress = 5; % usually it takes about 5% of total time. (Well, really 
-% it's a random number, but makes sense)
 
 % do the final "frame-by-frame" mask creation and write it to file
 % here progress is updated
