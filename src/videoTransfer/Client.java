@@ -8,13 +8,18 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-
+/**
+ * Client is the class which sends a video and an image (chosen by user) to the server,
+ * which elaborates the informations and sends back the result
+ *
+ */
 public class Client {
 
-	private static File video; // video to send
-	private static File backgroundImage; // background to send
-	private static File outputVideo;
-	private static String outputDir = "video_out";
+	// This parameters are used to define files chosen from user
+	private static File video; 						// video to send
+	private static File backgroundImage;			// background to send
+	private static File outputVideo; 				// where the final video is stored
+	private static String outputDir = "video_out";	
 
 	public static void main(String[] args) throws Exception {
 
@@ -43,7 +48,9 @@ public class Client {
 		// Send video
 		TransferUtils.send(clientSocket, video);
 		// send algorithm to use
-		sendAlgorithmChoice(clientSocket, algorithmToUse);
+		//sendAlgorithmChoice(clientSocket, algorithmToUse);
+		PrintStream printToServer = new PrintStream(clientSocket.getOutputStream());
+		printToServer.print(algorithmToUse);
 
 		// server-side computation...
 		System.out.println("Waiting for eleboration and download of the file...");

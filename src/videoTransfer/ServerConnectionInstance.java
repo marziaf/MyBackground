@@ -74,7 +74,15 @@ public class ServerConnectionInstance implements Runnable {
 		// second thing: accept incoming video
 		getVideo();
 		// third thing: accept selected algorithm
-		int algorithmToUse = getAlgorithm();
+		System.out.println("Getting algorithm"); //DEBUG
+		
+		//int algorithmToUse = getAlgorithm();
+		BufferedReader readAlg = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		//TODO this is not a very good solution, but works (%48 because the input is read 
+		// as char and the int is coverted to its ascii representation)
+		int algorithmToUse = readAlg.read()%48;
+		//System.out.println("Algorithm to use: "+algorithmToUse); //DEBUG
+		
 		// fourth thing: elaborate
 		elaborate(algorithmToUse);
 		// wait for elaboration...
@@ -88,7 +96,6 @@ public class ServerConnectionInstance implements Runnable {
 			} catch (InterruptedException e) {
 			}
 			System.out.println("Still computing...");
-			//TODO add status bar
 		}
 
 		// fifth thing: send back the video
@@ -97,6 +104,7 @@ public class ServerConnectionInstance implements Runnable {
 
 		// to be left open if we want it to be left alive for another computation
 		socket.close();
+		System.out.println("Closed connection with client "+instanceNumber);
 	}
 
 	/**
@@ -118,11 +126,9 @@ public class ServerConnectionInstance implements Runnable {
 		// set matlab workspace with the files we want to work on
 		matlabInterface.computeCommandAsynchronously("video = '" + finalPathVideoIn + "';" + "newBackground = '"
 				+ finalPathBackground + "';" + "video_out = '" + finalPathVideoOut + "';");
-
-		while (matlabInterface.isComputing()) {} // shouldn't take long
-
+		while (matlabInterface.isComputing()) {
+		} // shouldn't take long
 		// System.out.println("Ready to calculate background image"); // DEBUG
-
 		// let's do the actual calculations
 		matlabInterface.computeCommandAsynchronously("run('" + finalPathScript + "');");
 	}
@@ -139,6 +145,7 @@ public class ServerConnectionInstance implements Runnable {
 		TransferUtils.writeDataToFile(backgroundData, finalPathBackground.getAbsolutePath());
 	}
 
+	
 	private int getAlgorithm() throws IOException {
 		byte[] algData = new byte[4];
 		TransferUtils.readFromSocket(fromClientStream, algData, 4);
@@ -146,7 +153,7 @@ public class ServerConnectionInstance implements Runnable {
 	}
 
 	private void sendBackVideo() throws IOException {
-		TransferUtils.send(socket, new File(finalPathVideoOut + ".avi")); //TODO necessary .avi? (not an issue)
+		TransferUtils.send(socket, new File(finalPathVideoOut + ".avi")); // TODO necessary .avi? (not an issue)
 		// MATLAB seems to automatically put an avi-extension to the file name
 	}
 

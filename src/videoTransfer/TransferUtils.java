@@ -20,7 +20,8 @@ public final class TransferUtils {
 	   public static int convertByteArrayToInt(byte[] ba) {
 	        return ba[3] & 0xFF | (ba[2] & 0xFF) << 8 | (ba[1] & 0xFF) << 16 |(ba[0] & 0xFF) << 24;
 	    }
-
+	   
+	   
 	   public static void readFromSocket(BufferedInputStream buf, byte[] data, int size) throws IOException {
 	        int bytesAlreadyRead = 0;
 	        while(bytesAlreadyRead < size) {
@@ -73,6 +74,7 @@ public final class TransferUtils {
    		return buf;
    	}
 
+   	
    	/**
    	 * Main file sender method
    	 * 
