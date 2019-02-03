@@ -16,9 +16,9 @@ public class Server {
 	
 	//----------DIRECTORIES PREFERENCES---------
 	
-	private static String maindir = "ServerBuffer"+File.separator;
+	private static String maindir = "../ServerBuffer"+File.separator;
 	
-	public static  File MainDir = new File("../ServerBuffer");
+	public static  File MainDir = new File(maindir);
 	
 	public static File VideoInDir = new File(maindir+"video_in");
 	

@@ -103,10 +103,11 @@ public class ServerConnectionInstance implements Runnable {
 		System.out.println("Ready to set workspace"); //DEBUG
 
 		// set matlab workspace with the files we want to work on
-		matlabInterface.computeCommandAsynchronously("video = '.." + File.separator + Server.VideoInDir + File.separator
-				+ baseVideoInName + instanceNumber + ".avi';" + "newBackground = '.." + File.separator + Server.BackgroundDir
-				+ File.separator + baseBackgroundInName + instanceNumber + "';" + "video_out = '.." + File.separator
-				+ Server.VideoOutDir + File.separator + baseVideoOutName + instanceNumber + "';");
+		matlabInterface.computeCommandAsynchronously("video = '" + Server.VideoInDir.getAbsolutePath() + File.separator
+				+ baseVideoInName + instanceNumber + "';" 
+				+ "newBackground = '" + Server.BackgroundDir.getAbsolutePath()
+				+ File.separator + baseBackgroundInName + instanceNumber + "';" 
+				+ "video_out = '" + Server.VideoOutDir.getAbsolutePath() + File.separator + baseVideoOutName + instanceNumber + "';");
 		
 		while (matlabInterface.isComputing()) {
 		} // shouldn't take long
@@ -148,7 +149,7 @@ public class ServerConnectionInstance implements Runnable {
 	}
 
 	private void sendBackVideo() throws IOException {
-		TransferUtils.send(socket, new File(Server.VideoOutDir + File.separator + "new_vid" + instanceNumber + ".avi"));
+		TransferUtils.send(socket, new File(Server.VideoOutDir + File.separator + baseVideoOutName + instanceNumber + ".avi"));
 	}
 
 }
