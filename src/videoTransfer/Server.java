@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
+
+import org.omg.PortableServer.ServantActivator;
 
 /**
  * This Class builds and manages a Server for the application. The
@@ -16,17 +20,18 @@ public class Server {
 	
 	//----------DIRECTORIES PREFERENCES---------
 	
-	private static String maindir = "ServerBuffer"+File.separator;
+	private static String videoInDirName = "Video_in";
+	private static String videoOutDirName = "Video_out";
+	private static String backInDirName = "Background_in";
+	private static String scriptsDirName = "matlab_scripts";
+	private static String ServerDirName = "ServerBuffer";
 	
-	public static  File MainDir = new File(maindir);
-	
-	public static File VideoInDir = new File(maindir+"video_in");
-	
-	public static File VideoOutDir = new File(maindir+"video_out");
-	
-	public static File BackgroundDir = new File(maindir+"backgrounds");
-	
-	public static File ScriptsDir = new File("matlab_scripts");
+	public static File mainServerDirectory;
+	public static File videoInDir;
+	public static File videoOutDir;
+	public static File backInDir;
+
+	public static File scriptsDir;
 	
 	
 	//-----------CONNECTION PREFERENCES---------
@@ -50,10 +55,8 @@ public class Server {
 			int instanceCounter = 1;
 			
 			// Verify existence of buffer directories where to save files
-			if(!VideoInDir.exists()) VideoInDir.mkdirs();
-			if(!BackgroundDir.exists()) BackgroundDir.mkdir();
-			if(!VideoOutDir.exists()) VideoOutDir.mkdir();
-			System.out.println(VideoInDir.getAbsolutePath());
+			createDirectories();
+			
 
 			// Ask if to keep listening for connections or close (stop listening to connection requests)
 			System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
@@ -80,5 +83,39 @@ public class Server {
         ServerConnectionInstance newServerInstance = new ServerConnectionInstance(clientSocket, instanceNum);
         Thread newServerInsanceThread = new Thread(newServerInstance);
         newServerInsanceThread.start();
+    }
+    
+    private static void createDirectories() {
+    	// check if launched from bin or not
+    	File currentAbsPath = new File(".");
+    	String currentRelativePath = null;
+    	try {
+        	currentRelativePath = currentAbsPath.getCanonicalFile().getName().toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	System.out.println(currentRelativePath); //DEBUG
+		if (currentRelativePath.equals("bin")) {
+			System.out.println("EQUALS BIN"); //DEBUG
+			mainServerDirectory = new File(".."+File.separator+ServerDirName);
+			scriptsDir = new File(".."+File.separator+scriptsDirName);
+		} else {
+			mainServerDirectory = new File(ServerDirName); //DEBUG
+			scriptsDir = new File(scriptsDirName); //DEBUG
+		}
+		System.out.println(mainServerDirectory.getAbsolutePath()); //DEBUG
+		System.out.println(scriptsDir.getAbsolutePath());
+		// then set subDirs
+		backInDir = new File(mainServerDirectory.getAbsolutePath()+ File.separator
+				+backInDirName);
+		videoInDir = new File(mainServerDirectory.getAbsolutePath()+File.separator
+				+videoInDirName);
+		videoOutDir = new File(mainServerDirectory.getAbsolutePath()+ File.separator
+				+videoOutDirName);
+    	
+    	if(!videoInDir.exists()) videoInDir.mkdirs();
+		if(!backInDir.exists()) backInDir.mkdir();
+		if(!videoOutDir.exists()) videoOutDir.mkdir();
+    	
     }
 }

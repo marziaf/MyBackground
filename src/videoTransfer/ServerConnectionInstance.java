@@ -23,13 +23,14 @@ public class ServerConnectionInstance implements Runnable {
 
 	private int instanceNumber;
 
-	private String baseVideoInName = "video";
-	private String baseBackgroundInName = "image";
-	private String baseVideoOutName = "video_out";
+	private static String baseVideoInName = "video";
+	private static String baseBackgroundInName = "image";
+	private static String baseVideoOutName = "video_out";
+	
+	private  File finalPathVideoIn;
+	private  File finalPathBackground;
+	private  File finalPathVideoOut;
 
-	private String finalPathVideoIn;
-	private String finalPathBackground;
-	private String finalPathVideoOut;
 	
 	/**
 	 * Constructs a new ServerConnectionInstance, using the given socket to create
@@ -51,21 +52,8 @@ public class ServerConnectionInstance implements Runnable {
 			Thread mIThread = new Thread(matlabInterface);
 			mIThread.start();
 			matlabInterface.start();
+
 			
-			//final paths creation
-			finalPathVideoIn = Server.VideoInDir.getAbsolutePath() 
-					+ File.separator + baseVideoInName + instanceNumber;
-			finalPathBackground =  Server.BackgroundDir.getAbsolutePath()
-						+ File.separator + baseBackgroundInName + instanceNumber;
-			finalPathVideoOut = Server.VideoOutDir.getAbsolutePath() 
-					+ File.separator + baseVideoOutName + instanceNumber;
-			//make sure you were launched in the right path! if you are in bin
-			Path currentRelativePath = Paths.get("");
-			if (currentRelativePath.toAbsolutePath().getParent().toString().equals("bin")) {
-				finalPathVideoIn = ".." + File.separator + finalPathVideoIn;
-				finalPathBackground = ".." + File.separator + finalPathBackground;
-				finalPathVideoOut = ".." + File.separator + finalPathVideoOut;
-			}
 		} catch (IOException e) {
 			System.out.print("Failed to create Server connection instance, socket IO problem\n");
 		}
@@ -74,6 +62,7 @@ public class ServerConnectionInstance implements Runnable {
 	@Override
 	public void run() {
 		// TODO: implement busy-waiting serve
+		setFilePaths();
 		try {
 			serveRequest();
 		} catch (Exception e) {
@@ -125,7 +114,7 @@ public class ServerConnectionInstance implements Runnable {
 		}
 		System.out.println("Ready to set workspace"); // DEBUG
 
-		String finalPathScript = Server.ScriptsDir + File.separator +
+		String finalPathScript = Server.scriptsDir + File.separator +
 			((algorithmToUse==2) ? "blocks_fills_bg_substitute.m" : "median_bg_substitute.m");
 		if (Paths.get("").toAbsolutePath().getParent().toString().equals("bin"))
 			finalPathScript = ".." + File.separator + finalPathScript;
@@ -147,13 +136,13 @@ public class ServerConnectionInstance implements Runnable {
 	private void getVideo() throws IOException {
 		byte[] videoData = TransferUtils.getDataBytes(socket);
 		// write to file
-		TransferUtils.writeDataToFile(videoData, finalPathVideoIn);
+		TransferUtils.writeDataToFile(videoData, finalPathVideoIn.getAbsolutePath());
 	}
 
 	private void getBackground() throws IOException {
 		byte[] backgroundData = TransferUtils.getDataBytes(socket);
 		// write to file
-		TransferUtils.writeDataToFile(backgroundData, finalPathBackground);
+		TransferUtils.writeDataToFile(backgroundData, finalPathBackground.getAbsolutePath());
 	}
 
 	private int getAlgorithm() throws IOException {
@@ -166,6 +155,12 @@ public class ServerConnectionInstance implements Runnable {
 		TransferUtils.send(socket,
 				new File(finalPathVideoOut +".avi")); 
 		//MATLAB seems to automatically put an avi-extension to the file name 
+	}
+	
+	private void setFilePaths() {
+		finalPathBackground = new File(Server.backInDir.getAbsolutePath()+File.separator+baseBackgroundInName+instanceNumber);
+		finalPathVideoIn = new File(Server.videoInDir.getAbsolutePath()+File.separator+baseVideoInName+instanceNumber);
+		finalPathVideoOut = new File(Server.videoOutDir.getAbsolutePath()+File.separator+baseVideoOutName+instanceNumber);
 	}
 
 }

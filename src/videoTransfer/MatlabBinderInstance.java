@@ -1,5 +1,6 @@
 package videoTransfer;
 
+import java.io.File;
 import java.util.concurrent.Future;
 
 import com.mathworks.engine.EngineException;
@@ -25,6 +26,7 @@ public class MatlabBinderInstance implements Runnable {
 	private Future<Void> computing = null;
 	
 	private boolean started = false;
+
 
 	// if the final UI is Graphical, should implement a Queue to manage the
 	// commands sent to the matlab engine for evaluation
