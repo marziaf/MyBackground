@@ -55,7 +55,10 @@ public class Client {
 		// write received video to file
 		outputVideo.getParentFile().mkdirs();
 		TransferUtils.writeDataToFile(newVideo, outputVideo.getAbsolutePath());
-
+		
+		System.out.println("Finished, you'll find the file at: "
+				+outputVideo.getAbsolutePath());
+		
 		clientSocket.close();
 	}
 

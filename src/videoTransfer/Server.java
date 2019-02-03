@@ -16,7 +16,7 @@ public class Server {
 	
 	//----------DIRECTORIES PREFERENCES---------
 	
-	private static String maindir = "../ServerBuffer"+File.separator;
+	private static String maindir = "ServerBuffer"+File.separator;
 	
 	public static  File MainDir = new File(maindir);
 	
@@ -26,7 +26,7 @@ public class Server {
 	
 	public static File BackgroundDir = new File(maindir+"backgrounds");
 	
-	public static File ScriptsDir = new File("../matlab_scripts");
+	public static File ScriptsDir = new File("matlab_scripts");
 	
 	
 	//-----------CONNECTION PREFERENCES---------

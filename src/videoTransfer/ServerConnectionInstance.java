@@ -1,6 +1,8 @@
 package videoTransfer;
 
 import java.net.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.io.*;
@@ -25,6 +27,10 @@ public class ServerConnectionInstance implements Runnable {
 	private String baseBackgroundInName = "image";
 	private String baseVideoOutName = "video_out";
 
+	private String finalPathVideoIn;
+	private String finalPathBackground;
+	private String finalPathVideoOut;
+	
 	/**
 	 * Constructs a new ServerConnectionInstance, using the given socket to create
 	 * the appropriate input and output streams
@@ -45,6 +51,21 @@ public class ServerConnectionInstance implements Runnable {
 			Thread mIThread = new Thread(matlabInterface);
 			mIThread.start();
 			matlabInterface.start();
+			
+			//final paths creation
+			finalPathVideoIn = Server.VideoInDir.getAbsolutePath() 
+					+ File.separator + baseVideoInName + instanceNumber;
+			finalPathBackground =  Server.BackgroundDir.getAbsolutePath()
+						+ File.separator + baseBackgroundInName + instanceNumber;
+			finalPathVideoOut = Server.VideoOutDir.getAbsolutePath() 
+					+ File.separator + baseVideoOutName + instanceNumber;
+			//make sure you were launched in the right path! if you are in bin
+			Path currentRelativePath = Paths.get("");
+			if (currentRelativePath.toAbsolutePath().getParent().toString().equals("bin")) {
+				finalPathVideoIn = ".." + File.separator + finalPathVideoIn;
+				finalPathBackground = ".." + File.separator + finalPathBackground;
+				finalPathVideoOut = ".." + File.separator + finalPathVideoOut;
+			}
 		} catch (IOException e) {
 			System.out.print("Failed to create Server connection instance, socket IO problem\n");
 		}
@@ -84,6 +105,7 @@ public class ServerConnectionInstance implements Runnable {
 		}
 
 		// fifth thing: send back the video
+		System.out.println("sending back video client "+instanceNumber);
 		sendBackVideo();
 
 		// to be left open if we want it to be left alive for another computation
@@ -101,48 +123,37 @@ public class ServerConnectionInstance implements Runnable {
 		while (!matlabInterface.isReady() || Duration.between(t1, t2).toMillis() > 10000) {
 			t2 = Instant.now();
 		}
-		/*
-		 * try { Thread.sleep(10000); } catch (InterruptedException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
 		System.out.println("Ready to set workspace"); // DEBUG
 
+		String finalPathScript = Server.ScriptsDir + File.separator +
+			((algorithmToUse==2) ? "blocks_fills_bg_substitute.m" : "median_bg_substitute.m");
+		if (Paths.get("").toAbsolutePath().getParent().toString().equals("bin"))
+			finalPathScript = ".." + File.separator + finalPathScript;
 		// set matlab workspace with the files we want to work on
-		matlabInterface.computeCommandAsynchronously("video = '" + Server.VideoInDir.getAbsolutePath() + File.separator
-				+ baseVideoInName + instanceNumber + "';" + "newBackground = '" + Server.BackgroundDir.getAbsolutePath()
-				+ File.separator + baseBackgroundInName + instanceNumber + "';" + "video_out = '"
-				+ Server.VideoOutDir.getAbsolutePath() + File.separator + baseVideoOutName + instanceNumber + "';");
+		matlabInterface.computeCommandAsynchronously(
+				"video = '" + finalPathVideoIn + "';" + 
+				"newBackground = '" + finalPathBackground+ "';" + 
+				"video_out = '"	+ finalPathVideoOut + "';");
 
-		while (matlabInterface.isComputing()) {
-		} // shouldn't take long
+		while (matlabInterface.isComputing()) {} // shouldn't take long
 
 		System.out.println("Ready to calculate background image"); // DEBUG
-
-		// let's estimate the background
-		switch (algorithmToUse) {
-		case 2:
-			matlabInterface.computeCommandAsynchronously(
-					"run('" + Server.ScriptsDir + File.separator + "blocks_fills_bg_substitute.m')");
-			break;
-		case 1:
-		default:
-			matlabInterface.computeCommandAsynchronously(
-					"run('" + Server.ScriptsDir + File.separator + "median_bg_substitute.m')");
-			// TODO set definitive parameters for median algorithm
-		}
+		
+		// let's do the actual calculations
+		matlabInterface.computeCommandAsynchronously(
+				"run('" + finalPathScript +"');");
 	}
 
 	private void getVideo() throws IOException {
 		byte[] videoData = TransferUtils.getDataBytes(socket);
 		// write to file
-		TransferUtils.writeDataToFile(videoData, Server.VideoInDir + File.separator + baseVideoInName + instanceNumber);
+		TransferUtils.writeDataToFile(videoData, finalPathVideoIn);
 	}
 
 	private void getBackground() throws IOException {
 		byte[] backgroundData = TransferUtils.getDataBytes(socket);
 		// write to file
-		TransferUtils.writeDataToFile(backgroundData,
-				Server.BackgroundDir + File.separator + baseBackgroundInName + instanceNumber);
+		TransferUtils.writeDataToFile(backgroundData, finalPathBackground);
 	}
 
 	private int getAlgorithm() throws IOException {
@@ -153,7 +164,8 @@ public class ServerConnectionInstance implements Runnable {
 
 	private void sendBackVideo() throws IOException {
 		TransferUtils.send(socket,
-				new File(Server.VideoOutDir + File.separator + baseVideoOutName + instanceNumber + ".avi"));
+				new File(finalPathVideoOut +".avi")); 
+		//MATLAB seems to automatically put an avi-extension to the file name 
 	}
 
 }
