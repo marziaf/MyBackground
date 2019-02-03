@@ -4,7 +4,7 @@ SCRIPTNAME=$(basename "$0")
 #------------------------------------------------------------------------
 # project's directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-source var.sh
+source .var.sh
 #------------------------------------------------------------------------
 
 # get files to be compiled

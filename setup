@@ -2,7 +2,7 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1
 
-chmod 755 make-javacfile.sh
+chmod 755 .make-javacfile.sh
 if [ -f start-client ]; then
 	chmod 755 start-client
 fi
