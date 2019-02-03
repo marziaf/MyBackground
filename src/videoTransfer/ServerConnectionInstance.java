@@ -78,7 +78,9 @@ public class ServerConnectionInstance implements Runnable {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 			}
-			System.out.println("Still computing..."); //TODO qui si blocca
+			System.out.println("Still computing..."); //TODO qui si blocca -> check isComputing
+			//TODO possible solution: wait until file exists (and some more seconds until it's finished),
+			//but files have to be removed every time...
 		}
 
 		// fifth thing: send back the video
