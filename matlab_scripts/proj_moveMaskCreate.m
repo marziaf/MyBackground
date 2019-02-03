@@ -18,7 +18,6 @@ limblocks_number = 0;
     func_getMaskEdge(frames, edge_mask, Y_BLOCK_LENGTH(1), X_BLOCK_LENGTH(1), T_BLOCK_LENGTH(1), VARIANCE_THRESHOLD(1));
 
 i=1;
-proj_exportTempVideo;
 
 % ad ogni iterazione i di "pulizia", devi scorrere gli offset generati al
 % livello i-1, ricalcolare la maschera con blocchetti più piccoli,
@@ -86,8 +85,6 @@ for (i = 2:N_ITERATIONS)
     % bisogna anche ripulire la queue2, quella interna, dell'iterazione
     % appena fatta... la ripulisco già ad ogni inizio di iterazione sul
     % livello!
-
-    proj_exportTempVideo;
 end
 end
 %!!disp('->highest level mask created');
