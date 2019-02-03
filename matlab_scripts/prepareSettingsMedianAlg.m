@@ -1,6 +1,6 @@
 % this script creates the necessary settings and parameters where the
 % median-based algorithm lives on
-disp("PREPARESETTINGS RUNNING"); %DEBUG
+%disp("PREPARESETTINGS RUNNING"); %DEBUG
 %------------------------INPUT AND PARAMETERS PREPARATION----------------
 % ~~~~~~~~~~~~~Algorithm parameters~~~~~~~~~~~~~~
 % CAN BE MODIFIED ACCORDING TO NECESSITIES (better performances)

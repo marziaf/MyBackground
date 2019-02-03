@@ -1,7 +1,7 @@
 % estimate the background from the video using the median of the
 % frames
 
-disp("CONSTRUCTBACKGROUND RUNNING") %DEBUG
+%disp("CONSTRUCTBACKGROUND RUNNING") %DEBUG
 %---------------------BACKGROUND CONSTRUCTION----------------------------
 if strcmp(backMode,'mean')
     % ATTENTION! mean is not the best solution, but can be calculated

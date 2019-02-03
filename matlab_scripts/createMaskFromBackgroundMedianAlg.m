@@ -1,6 +1,6 @@
 % this section creates the mask which represents the background portion of
 % every frame
-disp("CREATING VIDEO") %DEBUG
+%disp("CREATING VIDEO") %DEBUG
 % ------------------INPUT PARAMETERS------------------------------
 % BACKGROUND CONSTRUCTION NEEDED!
 % video -> name of the video
@@ -31,6 +31,11 @@ open(outputVideo);
 % -------------------ELABORATION----------------------------------
 
 for index=1:numFrames %iterate over frames %TODO use readframe instead
+    % progress status
+    if (index%5 == 0)
+       progress = progress +((index/numFrames)-5); % where 5 is time taken
+       % for background computing
+    end
     % CALCULATE DIFFERENCE
     % get frame
     vidFrame = read(VObj,index); % read frame
