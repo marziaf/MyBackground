@@ -27,11 +27,11 @@ public final class TransferUtils {
 	}
 
 	/**
-	 * Read a buffer of bytes
+	 * Read "size" bytes from the "buf" stream, buffering until completion
 	 * @param buf - buffered input stream to read from
 	 * @param data - bytes array where to save data
 	 * @param size - size of data expected
-	 * @throws IOException
+	 * @throws IOException if the stream fails
 	 */
 	public static void readFromSocket(BufferedInputStream buf, byte[] data, int size) throws IOException {
 		int bytesAlreadyRead = 0;
@@ -44,7 +44,7 @@ public final class TransferUtils {
 	/**
 	 * Convert an int to an array of bytes
 	 * @param val - int to convert
-	 * @return
+	 * @return the converted value as byte array
 	 */
 	public static byte[] convertIntToByteArray(int val) {
 		byte[] ret = new byte[4];
@@ -56,10 +56,12 @@ public final class TransferUtils {
 	}
 
 	/**
-	 * Receive data
-	 * @param bufRead
+	 * Receive data from the stream "bufRead". This method is expected to be use with
+	 * "send" as it automatically firstly expects an integer representing the size of 
+	 * the data array, then receives it using a buffered reader
+	 * @param bufRead the input stream
 	 * @return data received
-	 * @throws IOException
+	 * @throws IOException if the stream fails
 	 */
 	public static byte[] receive(BufferedInputStream bufRead) throws IOException {
 		byte[] sizeByte = new byte[4]; 				// Where to get the size of the message
@@ -70,13 +72,12 @@ public final class TransferUtils {
 		return content;
 	}
 
-	//TODO can't remember
-	//TODO documentare da qua in poi
 	/**
-	 *
-	 * @param socket
-	 * @return
-	 * @throws IOException
+	 * High-level method to receive bytes as input from the specified socket. It calls 
+	 * the receive method which automatically expects the right size->bytes format from the sender
+	 * @param socket the socket on which listen for input
+	 * @return the final byte array expected
+	 * @throws IOException if the stream fails
 	 */
 	public static byte[] getDataBytes(Socket socket) throws IOException {
 		// Prepare input stream
@@ -86,11 +87,10 @@ public final class TransferUtils {
 	}
 
 	/**
-	 * Convert file into byte buffer
-	 * 
-	 * @param buf
-	 * @param file
-	 * @throws IOException
+	 * Utility that converts a file into a byte array.
+	 * @param file the file to convert
+	 * @return a byte array representation of this file
+	 * @throws IOException on any reading operation fail
 	 */
 	public static byte[] fileToBytesArray(File file) throws IOException {
 		byte[] buf = new byte[(int) file.length()]; // where to put files
@@ -102,11 +102,13 @@ public final class TransferUtils {
 	}
 
 	/**
-	 * Main file sender method
+	 * High-level method to send files as output from the specified socket. It calls 
+	 * the send method which automatically organizes the "send size"->"send data" format
+	 * the "receive" method expects
 	 * 
-	 * @param clientSocket
-	 * @param file
-	 * @throws IOException
+	 * @param clientSocket the socket on which to send the output stream of data
+	 * @param file the file to send through the byte pipe
+	 * @throws IOException if the stream fails
 	 */
 	public static void send(Socket clientSocket, File file) throws IOException {
 		// Create output stream
@@ -117,10 +119,11 @@ public final class TransferUtils {
 	}
 
 	/**
-	 * This method sends any byte array to the outToSocket stream
+	 * Method which sends a byte array on the ouput stream "outToSocket". The method firstly
+	 * sends the size of the data, then the actual byte array. To use in junction with "receive"
 	 * 
-	 * @param outToSocket - PrintStream to socket
-	 * @param buf         - buffer of bytes to send
+	 * @param outToSocket the ouput PrintStream
+	 * @param buf bytes to send
 	 */
 	public static void send(PrintStream outToSocket, byte[] buf) {
 		// send file
@@ -133,10 +136,10 @@ public final class TransferUtils {
 	/**
 	 * This method writes byte array data to a particular file
 	 * 
-	 * @param data     the data to be written
+	 * @param data the data bytes to be written
 	 * @param filename the pathname of the file
 	 * @throws FileNotFoundException if file does not exist
-	 * @throws IOException           if not allowed
+	 * @throws IOException if not allowed
 	 */
 	public static void writeDataToFile(byte[] data, String filename) throws FileNotFoundException, IOException {
 		FileOutputStream fileOutputStream = new FileOutputStream(filename);
@@ -144,6 +147,12 @@ public final class TransferUtils {
 		fileOutputStream.close();
 	}
 
+	/**
+	 * Method for rapid file-filesystem compatibility, can be used to check wheter a
+	 * particular path is a path that the operative system can accept
+	 * @param path the path to verify
+	 * @return true if the OS would accept it as valid, false otherwise
+	 */
 	public static boolean isValidFileInput(String path) {
 		try {
 			path = (new File(path)).getCanonicalPath();
