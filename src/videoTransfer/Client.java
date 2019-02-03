@@ -18,6 +18,7 @@ public class Client {
 	private static File backgroundImage;			// Background to send
 	private static File outputVideo; 				// Where the final video is stored
 	private static String outputDir = "video_out";	// The name of the final video
+	private static Scanner console;
 
 	/**
 	 * Main class connects to server, interacts with user and sends files
@@ -26,7 +27,7 @@ public class Client {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		Scanner console = new Scanner(System.in);	// Scanner used to interact with user
+		console = new Scanner(System.in);	// Scanner used to interact with user
 		// ----------- CONNECT ----------
 		Socket clientSocket = connect();			// Establish connection with server
 		if (clientSocket.isConnected()) {
@@ -53,7 +54,10 @@ public class Client {
 		printToServer.print(algorithmToUse);
 
 		// ------- SERVER-SIDE COMPUTATION -------
-		System.out.println("Waiting for eleboration and download of the file...");
+		System.out.println("Waiting for eleboration and download of the file...\n"
+				+ "While you're waiting please consider upgrading to PRO version "
+				+ "to display a progress bar on your next computation!");
+		
 
 		// ------------ RECEIVE VIDEO ------------
 		outputVideo = new File(outputDir + File.separator + 
@@ -95,32 +99,29 @@ public class Client {
 	/**
 	 * Ask user for server to connect to
 	 * 
-	 * @return the IP of the server, as specified by the user
+	 * @return ip
 	 */
 	private static String getServerAddress() {
 		
-		Scanner sc = new Scanner(System.in);
 		System.out.println("Server address?");	// Ask server to connect to
-		String input = sc.nextLine();
+		String input = console.nextLine();
 		if (input.equals("l"))					// Shortcut for localhost
 			return "127.0.0.1";
 		return input;
 	}
 
 	/**
-	 * Get background or video name and return file, sending a particular
-	 * "question" to the user 
+	 * Get background or video name and return file
 	 * 
 	 * @param s - "background" or "video"
 	 * @return file
 	 */
 	private static File getFile(String s, String question) {
 		
-		Scanner scanner = new Scanner(System.in);
 		while (true) {
 			try {									// Ask file name until a valid file is given
 				System.out.println(question);		
-				String fileName = scanner.nextLine();
+				String fileName = console.nextLine();
 				File file = new File(fileName);		// Get file and check existence
 				if (file.exists()) {
 					return file;

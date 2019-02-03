@@ -167,7 +167,7 @@ public class ServerConnectionInstance implements Runnable {
 		finalPathVideoIn = new File(
 				Server.videoInDir.getAbsolutePath() + File.separator + baseVideoInName + instanceNumber);
 		finalPathVideoOut = new File(
-				Server.videoOutDir.getAbsolutePath() + File.separator + baseVideoOutName + instanceNumber);
+				Server.videoOutDir.getAbsolutePath() + File.separator + baseVideoOutName + instanceNumber + ".avi");
 	}
 
 }
