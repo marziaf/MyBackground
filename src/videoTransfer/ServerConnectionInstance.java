@@ -26,12 +26,11 @@ public class ServerConnectionInstance implements Runnable {
 	private static String baseVideoInName = "video";
 	private static String baseBackgroundInName = "image";
 	private static String baseVideoOutName = "video_out";
-	
-	private  File finalPathVideoIn;
-	private  File finalPathBackground;
-	private  File finalPathVideoOut;
 
-	
+	private File finalPathVideoIn;
+	private File finalPathBackground;
+	private File finalPathVideoOut;
+
 	/**
 	 * Constructs a new ServerConnectionInstance, using the given socket to create
 	 * the appropriate input and output streams
@@ -53,7 +52,6 @@ public class ServerConnectionInstance implements Runnable {
 			mIThread.start();
 			matlabInterface.start();
 
-			
 		} catch (IOException e) {
 			System.out.print("Failed to create Server connection instance, socket IO problem\n");
 		}
@@ -81,20 +79,20 @@ public class ServerConnectionInstance implements Runnable {
 		elaborate(algorithmToUse);
 		// wait for elaboration...
 		// TODO send client the progress bar
-		//System.out.println("Got what I needed, now I should be doing matlab stuff"); //DEBUG
+		// System.out.println("Got what I needed, now I should be doing matlab stuff");
+		// //DEBUG
 		// TODO DEBUG
 		while (matlabInterface.isComputing()) {
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 			}
-			System.out.println("Still computing..."); //TODO qui si blocca -> check isComputing
-			//TODO possible solution: wait until file exists (and some more seconds until it's finished),
-			//but files have to be removed every time...
+			System.out.println("Still computing...");
+			//TODO add status bar
 		}
 
 		// fifth thing: send back the video
-		System.out.println("sending back video client "+instanceNumber);
+		System.out.println("Sending back video to client " + instanceNumber);
 		sendBackVideo();
 
 		// to be left open if we want it to be left alive for another computation
@@ -105,31 +103,28 @@ public class ServerConnectionInstance implements Runnable {
 	 * Common interface: the two algorithms choose the video in the fold
 	 */
 	private void elaborate(int algorithmToUse) {
-		//System.out.println("Inside algorithm to use"); // DEBUG
+		// System.out.println("Inside algorithm to use"); // DEBUG
 		Instant t1 = Instant.now();
 		Instant t2 = Instant.now();
 		while (!matlabInterface.isReady() || Duration.between(t1, t2).toMillis() > 10000) {
 			t2 = Instant.now();
 		}
-		//System.out.println("Ready to set workspace"); // DEBUG
+		// System.out.println("Ready to set workspace"); // DEBUG
 
-		String finalPathScript = Server.scriptsDir + File.separator +
-			((algorithmToUse==2) ? "blocks_fills_bg_substitute.m" : "median_bg_substitute.m");
+		String finalPathScript = Server.scriptsDir + File.separator
+				+ ((algorithmToUse == 2) ? "blocks_fills_bg_substitute.m" : "median_bg_substitute.m");
 		if (Paths.get("").toAbsolutePath().getParent().toString().equals("bin"))
 			finalPathScript = ".." + File.separator + finalPathScript;
 		// set matlab workspace with the files we want to work on
-		matlabInterface.computeCommandAsynchronously(
-				"video = '" + finalPathVideoIn + "';" + 
-				"newBackground = '" + finalPathBackground+ "';" + 
-				"video_out = '"	+ finalPathVideoOut + "';");
+		matlabInterface.computeCommandAsynchronously("video = '" + finalPathVideoIn + "';" + "newBackground = '"
+				+ finalPathBackground + "';" + "video_out = '" + finalPathVideoOut + "';");
 
 		while (matlabInterface.isComputing()) {} // shouldn't take long
 
-		//System.out.println("Ready to calculate background image"); // DEBUG
-		
+		// System.out.println("Ready to calculate background image"); // DEBUG
+
 		// let's do the actual calculations
-		matlabInterface.computeCommandAsynchronously(
-				"run('" + finalPathScript +"');");
+		matlabInterface.computeCommandAsynchronously("run('" + finalPathScript + "');");
 	}
 
 	private void getVideo() throws IOException {
@@ -151,15 +146,17 @@ public class ServerConnectionInstance implements Runnable {
 	}
 
 	private void sendBackVideo() throws IOException {
-		TransferUtils.send(socket,
-				new File(finalPathVideoOut +".avi")); 
-		//MATLAB seems to automatically put an avi-extension to the file name 
+		TransferUtils.send(socket, new File(finalPathVideoOut + ".avi")); //TODO necessary .avi? (not an issue)
+		// MATLAB seems to automatically put an avi-extension to the file name
 	}
-	
+
 	private void setFilePaths() {
-		finalPathBackground = new File(Server.backInDir.getAbsolutePath()+File.separator+baseBackgroundInName+instanceNumber);
-		finalPathVideoIn = new File(Server.videoInDir.getAbsolutePath()+File.separator+baseVideoInName+instanceNumber);
-		finalPathVideoOut = new File(Server.videoOutDir.getAbsolutePath()+File.separator+baseVideoOutName+instanceNumber);
+		finalPathBackground = new File(
+				Server.backInDir.getAbsolutePath() + File.separator + baseBackgroundInName + instanceNumber);
+		finalPathVideoIn = new File(
+				Server.videoInDir.getAbsolutePath() + File.separator + baseVideoInName + instanceNumber);
+		finalPathVideoOut = new File(
+				Server.videoOutDir.getAbsolutePath() + File.separator + baseVideoOutName + instanceNumber);
 	}
 
 }
