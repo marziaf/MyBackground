@@ -12,18 +12,19 @@ disp('final frambe-by-frame mask creation');
 % preallocation
 mask = zeros([height, width, nframes],'logical');
 
-%SHOUL FILL SMALL HOLES? YEEEES!
-
+% transform our candidate
+background_candidate_ycc = rgb2ycbcr(background_candidate);
 
 % calculate the final mask looking for pixels which are not the background
 % could use arrayfun
 for (f = 1:nframes)
-    % ANY color component change should mean change! test for change along
-    % the third dimension
-    % the black parts should be saved nontheless... let's hobe the subject
-    % is not black or just create another mask that saves the
-    % undefined/probabily-subject region
-    % SHOULD CHANGE COLOR PLANE TO YCbCr???
-    mask(:,:,f) = any(abs((frames(:,:,:,f) - background_candidate)) > DIFFERENCE_CHANGE_THRESHOLD,3);
+    % ANY YCbCr component change means change over the background
+    actualFrameDiff = abs(rgb2ycbcr(frames(:,:,:,f)) - background_candidate_ycc); %3-plane image
+    % mask(:,:,f) = any(actualFrameDiff > DIFFERENCE_CHANGE_THRESHOLD, 3);
+    mask(:,:,f) = actualFrameDiff(:,:,1) > DIFFERENCE_CHANGE_THRESHOLD(1) | ...
+                actualFrameDiff(:,:,2) > DIFFERENCE_CHANGE_THRESHOLD(2) | ...
+                actualFrameDiff(:,:,3) > DIFFERENCE_CHANGE_THRESHOLD(3);
+    % close small holes left by the algorithm 
+    mask(:,:,f) = bwareaopen(mask(:,:,f), HOLES_MAX_AREA);
 end
 

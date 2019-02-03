@@ -23,8 +23,13 @@ FILTER_ON = true;
 FILTER_SIGMA = [20, 20, 1];
 FILTER_THRESHOLD = 0.1;
 
-% final difference between original frames and estimated background
-DIFFERENCE_CHANGE_THRESHOLD = 10;
+% final difference between original frames and estimated background, set as
+% YCbCr difference in value
+DIFFERENCE_CHANGE_THRESHOLD = [5, 2, 2];
+
+% minium allowed pixel area to be considered proper subject mask, those
+% mask blobs under this max should be eliminated
+HOLES_MAX_AREA = 10000;
 
 % maxinum number of offsets, just used for pre-allocation of memory
 MAX_OFFSETS_NUM = 100000;
@@ -57,9 +62,8 @@ my_edge = @(frm) edge(frm(:,:,1), EDGE_METHOD, EDGE_THRESHOLD)+ ...
 
 % could use arrayfun?
 for (t = 1:nframes) 
-    % SAREBBE TOP SCRIVERE UN EDGE DETECTOR CHE PREFERISCE UN PO' IL MOTION
-    % BLUR? meh dipende... basta avere preferenza per i "soft edges"
-    % E SAREBBE ANCHE TOP FARE IN PARALLELO GRRR ARRAYFUN CHE PROBLEMI HA
+    % would be great to use an edge detector which prefers "soft-edges", as
+    % motion blur is what we could be looking for
     edge_mask(:,:,t) = (my_edge(frames(:,:,:,t)) >= 1);
 end
 
@@ -67,3 +71,9 @@ end
 %------------------READ BACKGROUND-----------------------------
 disp('Background reading');
 new_background = imread(newBackground);
+
+% prepare a GREEN-SCREEN for transforming the black, "unknown" background
+% part in the final calculation. could be made of other colors aswell
+green_dot = zeros([2,2,3],'uint8');
+green_dot(:,:,2) = 255;
+background_green_screen = imresize(green_dot,[height, width]);
