@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1
+
+source var.sh
+cd $FILEBIN
+#java -classpath .:$MAT_ROOT/extern/engines/java/jar/engine.jar  $PACKAGE.Server < ../.demo-server-commands
+cat "../.demo-server-commands" | java -classpath .:$MAT_ROOT/extern/engines/java/jar/engine.jar  $PACKAGE.Server
+
