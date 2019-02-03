@@ -18,24 +18,20 @@ import org.omg.PortableServer.ServantActivator;
  */
 public class Server {
 	
-	//----------DIRECTORIES PREFERENCES---------
-	
+	// Names of files and directories on server
 	private static String videoInDirName = "Video_in";
 	private static String videoOutDirName = "Video_out";
 	private static String backInDirName = "Background_in";
 	private static String scriptsDirName = "matlab_scripts";
 	private static String ServerDirName = "ServerBuffer";
-	
+	// Directories where files are stored
 	public static File mainServerDirectory;
 	public static File videoInDir;
 	public static File videoOutDir;
 	public static File backInDir;
-
+	// Directory of matlab scripts
 	public static File scriptsDir;
-	
-	
-	//-----------CONNECTION PREFERENCES---------
-	
+	// Port to connect to
 	public static final int Port = 40000;
 	
 	/**
@@ -45,39 +41,34 @@ public class Server {
 	 * @param args -not used
 	 */
 	public static void main(String[] args) {
+		
 		try {
-			
+			// -------- PREPARE FOR CONNECTION -------
 			Scanner console = new Scanner(System.in);
-
 			ServerSocket welcomeSocket = new ServerSocket(Port);
-			// instanceCounter used to identify which files belong to whom (otherwise the various instances may go blep
-			// when saving their files)
-			int instanceCounter = 1;
+			int instanceCounter = 1;	// Counts instances to track clients id
+			createDirectories();		// Verify existence of needed directories
 			
-			// Verify existence of buffer directories where to save files
-			createDirectories();
-			
-
-			// Ask if to keep listening for connections or close (stop listening to connection requests)
+			// -------------- CONNECT --------------
 			System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
 			while (console.next().equals("l")) {
-				Socket newClientSocket = welcomeSocket.accept();
-				System.out.println("Connected with " + newClientSocket.getInetAddress().getHostAddress());
-				// Serve client requests
-				serveNewClient(newClientSocket, instanceCounter++);
+				Socket newClientSocket = welcomeSocket.accept();	// Connect
+				System.out.println("Connected with " 
+						+ newClientSocket.getInetAddress().getHostAddress());
+				serveNewClient(newClientSocket, instanceCounter++);	// Create connection 
+																	// instance to serve client
 				System.out.print("Press 'q' to quit, 'l' to listen for new connections: ");
 			}
 			console.close();
-
 		} catch (IOException e) {
-			System.out.println("IO Error, port already in use?");
+			System.out.println("IO Error, port "+Port+" already in use?");
 		}
 	}
 	
 	
 	/**
-	 * Private method to serve new connections, which live on clientSocket
-	 * @param clientSocket the new connection socket with the new client
+	 * Private method to serve new connections, which lives on clientSocket
+	 * @param clientSocket - the new connection socket with the new client
 	 */
     private static void serveNewClient(Socket clientSocket, int instanceNum) {
         ServerConnectionInstance newServerInstance = new ServerConnectionInstance(clientSocket, instanceNum);
@@ -85,6 +76,9 @@ public class Server {
         newServerInsanceThread.start();
     }
     
+    /**
+     * If directories don't exist, create them
+     */
     private static void createDirectories() {
     	// check if launched from bin or not
     	File currentAbsPath = new File(".");
@@ -94,16 +88,14 @@ public class Server {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (currentRelativePath.equals("bin")) {
-			// if ran via script
+		if (currentRelativePath.equals("bin")) { // If ran via script
 			mainServerDirectory = new File(".."+File.separator+ServerDirName);
 			scriptsDir = new File(".."+File.separator+scriptsDirName);
-		} else {
-			// if ran via eclipse/others
+		} else {								// If ran via eclipse/others
 			mainServerDirectory = new File(ServerDirName); 
 			scriptsDir = new File(scriptsDirName);
 		}
-		// then set subDirs
+		// Set subDirs
 		backInDir = new File(mainServerDirectory.getAbsolutePath()+ File.separator
 				+backInDirName);
 		videoInDir = new File(mainServerDirectory.getAbsolutePath()+File.separator
