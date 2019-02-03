@@ -20,7 +20,7 @@ public class ServerConnectionInstance implements Runnable {
 	private MatlabBinderInstance matlabInterface;
 
 	private int instanceNumber;
-	
+
 	private String baseVideoInName = "video";
 	private String baseBackgroundInName = "image";
 	private String baseVideoOutName = "video_out";
@@ -70,10 +70,16 @@ public class ServerConnectionInstance implements Runnable {
 		// fourth thing: elaborate
 		elaborate(algorithmToUse);
 		// wait for elaboration...
-		//TODO send client the progress bar
-		System.out.println("Got what I needed, now I should be doing matlab stuff"); //DEBUG
-		while (matlabInterface.isComputing()) { try {Thread.sleep(10000);} catch
-		(InterruptedException e) {} System.out.println("Still computing..."); }
+		// TODO send client the progress bar
+		System.out.println("Got what I needed, now I should be doing matlab stuff");
+		// TODO DEBUG
+		while (matlabInterface.isComputing()) {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+			}
+			System.out.println("Still computing..."); //TODO qui si blocca
+		}
 
 		// fifth thing: send back the video
 		sendBackVideo();
@@ -82,37 +88,33 @@ public class ServerConnectionInstance implements Runnable {
 		socket.close();
 	}
 
-
 	/**
 	 * Common interface: the two algorithms choose the video in the fold
 	 */
 	private void elaborate(int algorithmToUse) {
-		System.out.println("Inside algorithm to use"); //DEBUG
-		//TODO wtf?
+		System.out.println("Inside algorithm to use"); // DEBUG
+		// TODO wtf?
 		Instant t1 = Instant.now();
 		Instant t2 = Instant.now();
-		while(!matlabInterface.isReady() || Duration.between(t1, t2).toMillis() > 10000) {
+		while (!matlabInterface.isReady() || Duration.between(t1, t2).toMillis() > 10000) {
 			t2 = Instant.now();
 		}
-		/*try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		System.out.println("Ready to set workspace"); //DEBUG
+		/*
+		 * try { Thread.sleep(10000); } catch (InterruptedException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); }
+		 */
+		System.out.println("Ready to set workspace"); // DEBUG
 
 		// set matlab workspace with the files we want to work on
 		matlabInterface.computeCommandAsynchronously("video = '" + Server.VideoInDir.getAbsolutePath() + File.separator
-				+ baseVideoInName + instanceNumber + "';" 
-				+ "newBackground = '" + Server.BackgroundDir.getAbsolutePath()
-				+ File.separator + baseBackgroundInName + instanceNumber + "';" 
-				+ "video_out = '" + Server.VideoOutDir.getAbsolutePath() + File.separator + baseVideoOutName + instanceNumber + "';");
-		
+				+ baseVideoInName + instanceNumber + "';" + "newBackground = '" + Server.BackgroundDir.getAbsolutePath()
+				+ File.separator + baseBackgroundInName + instanceNumber + "';" + "video_out = '"
+				+ Server.VideoOutDir.getAbsolutePath() + File.separator + baseVideoOutName + instanceNumber + "';");
+
 		while (matlabInterface.isComputing()) {
 		} // shouldn't take long
 
-		System.out.println("Ready to calculate background image"); //DEBUG
+		System.out.println("Ready to calculate background image"); // DEBUG
 
 		// let's estimate the background
 		switch (algorithmToUse) {
@@ -123,16 +125,15 @@ public class ServerConnectionInstance implements Runnable {
 		case 1:
 		default:
 			matlabInterface.computeCommandAsynchronously(
-					"run('" + Server.ScriptsDir + File.separator + "median_bg_substitute.m')"); 
-			//TODO set definitive parameters for median algorithm
+					"run('" + Server.ScriptsDir + File.separator + "median_bg_substitute.m')");
+			// TODO set definitive parameters for median algorithm
 		}
 	}
 
 	private void getVideo() throws IOException {
 		byte[] videoData = TransferUtils.getDataBytes(socket);
 		// write to file
-		TransferUtils.writeDataToFile(videoData, 
-				Server.VideoInDir + File.separator + baseVideoInName + instanceNumber);
+		TransferUtils.writeDataToFile(videoData, Server.VideoInDir + File.separator + baseVideoInName + instanceNumber);
 	}
 
 	private void getBackground() throws IOException {
@@ -149,7 +150,8 @@ public class ServerConnectionInstance implements Runnable {
 	}
 
 	private void sendBackVideo() throws IOException {
-		TransferUtils.send(socket, new File(Server.VideoOutDir + File.separator + baseVideoOutName + instanceNumber + ".avi"));
+		TransferUtils.send(socket,
+				new File(Server.VideoOutDir + File.separator + baseVideoOutName + instanceNumber + ".avi"));
 	}
 
 }
