@@ -105,14 +105,13 @@ public class ServerConnectionInstance implements Runnable {
 	 * Common interface: the two algorithms choose the video in the fold
 	 */
 	private void elaborate(int algorithmToUse) {
-		System.out.println("Inside algorithm to use"); // DEBUG
-		// TODO wtf?
+		//System.out.println("Inside algorithm to use"); // DEBUG
 		Instant t1 = Instant.now();
 		Instant t2 = Instant.now();
 		while (!matlabInterface.isReady() || Duration.between(t1, t2).toMillis() > 10000) {
 			t2 = Instant.now();
 		}
-		System.out.println("Ready to set workspace"); // DEBUG
+		//System.out.println("Ready to set workspace"); // DEBUG
 
 		String finalPathScript = Server.scriptsDir + File.separator +
 			((algorithmToUse==2) ? "blocks_fills_bg_substitute.m" : "median_bg_substitute.m");
@@ -126,7 +125,7 @@ public class ServerConnectionInstance implements Runnable {
 
 		while (matlabInterface.isComputing()) {} // shouldn't take long
 
-		System.out.println("Ready to calculate background image"); // DEBUG
+		//System.out.println("Ready to calculate background image"); // DEBUG
 		
 		// let's do the actual calculations
 		matlabInterface.computeCommandAsynchronously(

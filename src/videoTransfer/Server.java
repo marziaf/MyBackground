@@ -94,17 +94,17 @@ public class Server {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	System.out.println(currentRelativePath); //DEBUG
+    	//System.out.println(currentRelativePath); //DEBUG
 		if (currentRelativePath.equals("bin")) {
-			System.out.println("EQUALS BIN"); //DEBUG
+			//System.out.println("EQUALS BIN"); //DEBUG
 			mainServerDirectory = new File(".."+File.separator+ServerDirName);
 			scriptsDir = new File(".."+File.separator+scriptsDirName);
 		} else {
-			mainServerDirectory = new File(ServerDirName); //DEBUG
-			scriptsDir = new File(scriptsDirName); //DEBUG
+			mainServerDirectory = new File(ServerDirName); 
+			scriptsDir = new File(scriptsDirName);
 		}
-		System.out.println(mainServerDirectory.getAbsolutePath()); //DEBUG
-		System.out.println(scriptsDir.getAbsolutePath());
+		//System.out.println(mainServerDirectory.getAbsolutePath()); //DEBUG
+		//System.out.println(scriptsDir.getAbsolutePath()); //DEBUG
 		// then set subDirs
 		backInDir = new File(mainServerDirectory.getAbsolutePath()+ File.separator
 				+backInDirName);
