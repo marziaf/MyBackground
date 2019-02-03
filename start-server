@@ -2,7 +2,7 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1
 
-source var.sh
+source .var.sh
 cd $FILEBIN
 java -classpath .:$MAT_ROOT/extern/engines/java/jar/engine.jar  $PACKAGE.Server
 

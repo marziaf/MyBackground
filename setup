@@ -10,7 +10,7 @@ if [ -f start-server ]; then
 	chmod 755 start-server
 fi
 
-source var.sh
+source .var.sh
 # Compile java files
 FILES=$(ls $FILESRC | sed 's/\.java'//g)
-./make-javacfile.sh $FILES
+./.make-javacfile.sh $FILES
