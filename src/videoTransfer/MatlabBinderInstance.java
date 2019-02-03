@@ -148,8 +148,13 @@ public class MatlabBinderInstance implements Runnable {
 		return computing != null && !computing.isDone();
 	}
 
+	/**
+	 * Returns the information on wheter or not the MATLAB engine was completely loaded
+	 * and is ready to compute commands
+	 * @return true if the matlab engine is alive, false otherwise
+	 */
 	public boolean isReady() {
-		return started;
+		return started; //could be substituted with "engine != null" but it doesn't reliably work
 	}
 
 }
