@@ -20,4 +20,3 @@ To start server
 ```
 ./start-server
 ```
-### DEMO
