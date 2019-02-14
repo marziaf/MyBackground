@@ -1,6 +1,6 @@
 % this section creates the mask which represents the background portion of
 % every frame
-%disp("CREATING VIDEO") %DEBUG
+
 % ------------------INPUT PARAMETERS------------------------------
 % BACKGROUND CONSTRUCTION NEEDED!
 % video -> name of the video
@@ -8,6 +8,13 @@
 % backMode -> modality to detect background ('median' (suggested), 'mean' (use only if little memory is available))
 % gaussianity (To be set to default)-> gaussian factor for blurring (suggested 5)
 % dSensitivity (To be set to default)-> sensitivity to changes between frame and background (suggested 20-40)
+
+% --------------------------NOTES-------------------------
+% The aim of this algorithm is to be as fast as possible.
+% For this reason it requires good ligth conditions (no hard
+% shadows) and enough movement for background interpolation.
+% These specifics are not very limiting and allow the code to
+% be fast and work fine in most situations.
 
 %---------------NEW BACKGROUND PREPARATION---------------------- 
 % get the size of video frames from the just calculated background
@@ -19,39 +26,39 @@ newBack = imresize(newBack, [nrows ncols]);
 % filters are used to correct video imperfections
 % gaussian filter -> smooth image
 gaussback = imgaussfilt(background,gaussianity);
-bwBack = rgb2gray(gaussback);
-% mask filter for holes removal %TODO find best filter
+%% black&white background to make it easier to evaluate 
+%% the complessive distance between background and the frames
+%% bwBack = rgb2gray(gaussback);
+
+% mask filter for holes removal
 disk = strel('disk',4,4);
 
 %-------------------VIDEO WRITER PREPARATION----------------------
 outputVideo = VideoWriter(video_out);
-outputVideo.FrameRate = FrameRate; %TODO perch� � cos� accelerato?
+outputVideo.FrameRate = FrameRate;
 open(outputVideo);
 
 % -------------------ELABORATION----------------------------------
 
-for index=1:numFrames %iterate over frames %TODO use readframe instead
+for index=1:numFrames %iterate over frames
     % progress status
     if (mod(index,20) == 0)
        progress = ((index/numFrames)*100); % not considering time for background construction
        % for background computing
        disp(progress)
     end
+    
     % CALCULATE DIFFERENCE
     % get frame
     vidFrame = read(VObj,index); % read frame
     gaussframe = imgaussfilt(vidFrame,gaussianity); % apply gaussian filter
     % calculate difference
-    %TODO necessary grayscale? Efficent?
-    %NOTE rgb2gray converts RGB values to grayscale values by forming a weighted sum of the R, G, and B components:
-    %0.2989 * R + 0.5870 * G + 0.1140 * B 
-    bwFrame = rgb2gray(gaussframe); % grayascale to sum the differences on different color layers
-    %bwFrame = imadjust(bwFrame); % correct contrast to delete shadows
-    %bwBack = imadjust(bwBack);
-    diff = imabsdiff(bwBack,bwFrame); % cast to double to avoid sign problems
-    
+    %%bwFrame = rgb2gray(gaussframe); % grayascale to sum the differences on different color layers
+    %%diff = imabsdiff(bwBack,bwFrame); % cast to double to avoid sign problems
+    diff = imabsdiff(gaussframe, gaussback);
+    diff2d = diff(:,:,1)+diff(:,:,2)+diff(:,:,3);
     % put to zero differences lower than dSensitivity
-    diff2d = uint8(floor(double(diff)./dSensitivity));
+    diff2d = uint8(floor(double(diff2d)./dSensitivity));
     
     % CREATE MASK AND REPLACE BACKGROUND
     % mask -> zero if to be substituted with new background, one otherwise
