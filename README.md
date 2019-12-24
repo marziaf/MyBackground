@@ -1,6 +1,8 @@
 # MyBackground
 Client-server application for video background replacement
 
+Project presentation: https://bit.ly/374PVZI
+
 ## Setup
 To compile java files, run `setup`:
 ```
